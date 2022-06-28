@@ -45,7 +45,7 @@ var WORDS = [
 	"Sabar ajalah ya hati gue kan kayak tango. Berapa lapis? Ratusan!",
 	"Barangsiapa yang belum bangun 'jam segini,' maka mereka termasuk kaum yang bangun 'jam segitu'.",
 	"Saya gemuk bukan karena saya suka makan, tapi karena saya sering lupa kalau saya sudah makan.",
-	"Aku rela ditangkap polisi asal tuduhannya atas pencurian hatimu".,
+	"Aku rela ditangkap polisi asal tuduhannya atas pencurian hatimu.",
 	"Cinta adalah pengorbanan, tapi kalau pengorbanan mulu sih namanya penderitaan.",
 	"Sejak kenal kamu, bawaannya pengin belajar terus. Belajar jadi yang terbaik.",
 	"Angkutan kota jauh dekat Rp 2 ribu, kalau kamu jauh dekat ya di hatiku.",
@@ -121,4 +121,6 @@ var WORDS = [
 	"Sampe sekarang gue gak percaya ada telor palsu, yang gue percaya cuma harapan palsu",
 	"Pacaran itu kaya permen karet yah..awalnya aja manis dan lengket, lama lama bakal hambar.. terus dibuang deh",
 	"Sepandai-pandainnya tupai melompat, akhirnya akan jatuh juga. Sejomblo-jomblonya kamu sekarang, akhirnya akan nikah juga"
+	
+	
 ]

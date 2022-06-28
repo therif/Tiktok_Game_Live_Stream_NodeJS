@@ -54,17 +54,18 @@ $(document).ready(() => {
     // Test
     $("#btnPrepare").click(function(e) {
         // Check sound
-        playSound(1);
-        playSound(2);
-        playSound(3);
-        playSound(4);
-        speakTTS(MSG_TEST);
+        //playSound(1);
+        //playSound(2);
+        //playSound(3);
+        //playSound(4);
+        //speakTTS(MSG_TEST);
 
         // Populate dummy
-        for (let i = 0; i < 30; i++) {
-            addContent("<div style='text-align:center;'>Welcome 🥳🥳🥳</div>");
-        }
+        //for (let i = 0; i < 30; i++) {
+            //addContent("<div style='text-align:center;'>Welcome 🥳🥳🥳</div>");
+        //}
 
+        addContent("<div style='text-align:center;'>Welcome 🥳🥳🥳</div>");
         // Load game
         loadGame();
 
@@ -186,6 +187,38 @@ function loadGame() {
     }
 }
 
+function loadGameKalimat() {
+    // Check
+    if (gameWords.length < 1) {
+        gameWords = shuffle(WORDS);
+    }
+
+    // Load
+    gameSelectedWord = gameWords.pop();
+
+    // Set remain words
+    $("#gameWords").html(gameWords.length);
+
+    // Check
+    if (typeof gameSelectedWord === 'string') {
+        // Normalize
+        if (string.includes("|")) {
+            splittedWord = gameSelectedWord.split("|");
+            gameSelectedWord = splittedWord[1];
+
+            // Set
+            $("#textGuess").html("<div style='font-size:70%;padding-bottom:5px;'>" + splittedWord[0] + "</div>" + censor(gameSelectedWord));
+
+            // Timeout
+            countDown()
+        }
+        
+
+    } else {
+        loadGame();
+    }
+}
+
 function checkWinner(data, msg) {
     // Check type
     if (typeof gameSelectedWord === 'string' && typeof msg === 'string') {
@@ -289,12 +322,23 @@ function addMessage(data, msg) {
     }
 }
 
+function addPhotoProfil(usernya,urlpathimg) {
+    let profilnya = "<center><span style='font-weight: bold;'>" + usernya + "</span><br><img src='"+urlpathimg+"'></center><br>";
+    return profilnya;    
+}
+
+function addPhotoGift(giftname,jumlah,urlpathimg) {
+    let profilnya = "<p align='center'>"+giftname+" <img src='"+urlpathimg+"' width='35' height='35'> x"+jumlah+"</p>";
+    return profilnya;    
+}
+
 function addGift(data) {
     // DATA
     let userName = data.uniqueId;
     let cleanText = "Thank You "+userName;
     let messagegift = "Thank You";
-    let contentnya = "<p align='center'>"+messagegift+"<br><span style='font-weight: bold;'>" + userName + "</span><br><img src='"+data.profilePictureUrl+"'><br><img src='"+data.giftPictureUrl+"' alt='"+data.giftName+"' width='150' height='150'></p>";
+    
+    let tssMsg = MSG_GIFT.replace("|username|", data.uniqueId);
 
     //addMessage(data, data.label.replace('{0:user}', '').replace('likes', `${data.likeCount} likes`));
  
@@ -302,8 +346,7 @@ function addGift(data) {
         // Streak in progress => show only temporary
         console.log(`${data.uniqueId} is sending gift ${data.giftName} x${data.repeatCount}`);
         
-        // Add
-        addContent(contentnya);
+        addContent(addPhotoProfil(data.uniqueId, data.profilePictureUrl) + addPhotoGift(data.giftName, data.repeatCount, data.giftPictureUrl));
 
         // Sound
         if (confPrintSound) {
@@ -311,16 +354,16 @@ function addGift(data) {
         }
 
         //add TTS
-        if (confGiftTTS) {
-            speakTTS(cleanText);
+        if (confGiftTTS) {            
+            //speakTTS(cleanText);
+            speakTTS(tssMsg);
         }
 
     } else {
         // Streak ended or non-streakable gift => process the gift with final repeat_count
         console.log(`${data.uniqueId} has sent gift ${data.giftName} x${data.repeatCount}`);
         
-        // Add
-        addContent(contentnya);
+        addContent(addPhotoProfil(data.uniqueId, data.profilePictureUrl) + addPhotoGift(data.giftName, data.repeatCount, data.giftPictureUrl));
 
         // Sound
         if (confPrintSound) {
