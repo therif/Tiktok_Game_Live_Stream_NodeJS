@@ -1,0 +1,30 @@
+{
+  // Sender Details
+  userId: '6976651226482787334',
+  uniqueId: 'zerodytester',
+  nickname: 'Zerody One',
+  followRole: 0,
+  userBadges: [],
+  profilePictureUrl: 'https://p16-sign.tiktokcdn-us.com/...',
+  isModerator: true,
+  isNewGifter: false,
+  isSubscriber: true,
+  topGifterRank: 3,
+  
+  // Gift Details
+  giftId: 5655,
+  repeatCount: 1,
+  repeatEnd: true,  
+  describe: 'Sent Rose',
+  giftType: 1,
+  diamondCount: 1,
+  giftName: 'Rose',
+  giftPictureUrl: 'https://p19-webcast.tiktokcdn.com/...',
+  timestamp: 1649962111957,
+  extendedGiftInfo: {
+    // This will be filled when you enable the `enableExtendedGiftInfo` option
+  },
+  
+  // Receiver Details (can also be a guest broadcaster)
+  receiverUserId: '7044962356446839814'
+}
