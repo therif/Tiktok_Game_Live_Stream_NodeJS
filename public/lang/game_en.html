@@ -8,7 +8,7 @@
 		<meta name="author" content="adierebel">
 		<link rel="stylesheet" href="../assets/css/reset.css?v=1.0">
 		<link rel="stylesheet" href="../assets/css/style.css?v=1.0">
-		<script type="text/javascript" src="words_en.js"></script>
+		<script type="text/javascript" src="words_kata_campur.js"></script>
 		<script type="text/javascript" src="msg_en.js"></script>
 		<script type="text/javascript" src="../assets/tts/speakClient.js"></script>
 		<script type="text/javascript" src="../assets/js/jquery.js"></script>
@@ -33,6 +33,7 @@
 				</div>
 				<div class="text-bold">Settings:</div>
 				<table class="mt-2 mb-3">
+					<input id="gameKata" type="hidden" value="true"/>
 					<tr><td><input id="confComment" type="checkbox" checked="true"/>&nbsp;&nbsp;</td><td>Comment</td></tr>
 					<tr><td><input id="confLike" type="checkbox" />&nbsp;&nbsp;</td><td>Like</td></tr>
 					<tr><td><input id="confShare" type="checkbox" checked="true"/>&nbsp;&nbsp;</td><td>Share &amp; Follow</td></tr>
@@ -44,7 +45,7 @@
 				</table>
 				<div class="text-bold">Live Chat</div>
 				<div class="mb-3 mt-2">
-					<input id="targetUsername" type="text" placeholder="Enter @username" style="width:140px;"/>
+					<input id="targetUsername" type="text" placeholder="Enter @username" style="width:140px;" value="@moveupinc"/>
 					<button id="targetConnect">Connect</button>
 				</div>
 				<div>

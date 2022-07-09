@@ -4,6 +4,7 @@ let gameWords = [];
 let gamegameSelectedWord = null;
 let gameTimer = null;
 let gameStatus = false;
+let gameKata = true;
 
 // Config
 let confComment = false;
@@ -61,11 +62,13 @@ $(document).ready(() => {
         //speakTTS(MSG_TEST);
 
         // Populate dummy
-        //for (let i = 0; i < 30; i++) {
-            //addContent("<div style='text-align:center;'>Welcome 🥳🥳🥳</div>");
-        //}
+        for (let i = 0; i < 10; i++) {
+            addContent("<div style='text-align:center;'>Welcome 🥳🥳🥳</div>");
+            addContent("<div style='text-align:center;'>Share, Comment and Like</div>");
+            addContent("<div style='text-align:center;'>Dapatkan Kata-kata Konyol! Lucu! dan Mungkin Bijak :D</div>");
+        }
 
-        addContent("<div style='text-align:center;'>Welcome 🥳🥳🥳</div>");
+        
         // Load game
         loadGame();
 
@@ -173,11 +176,15 @@ function loadGame() {
     // Check
     if (typeof gameSelectedWord === 'string') {
         // Normalize
-        splittedWord = gameSelectedWord.split("|");
-        gameSelectedWord = splittedWord[1];
+        if (gameKata) {
+            splittedWord = gameSelectedWord.split("|");
+            gameSelectedWord = splittedWord[1];
 
-        // Set
-        $("#textGuess").html("<div style='font-size:70%;padding-bottom:5px;'>" + splittedWord[0] + "</div>" + censor(gameSelectedWord));
+            $("#textGuess").html("<div style='font-size:70%;padding-bottom:5px;'>" + splittedWord[0] + "</div>" + censor(gameSelectedWord));
+        } else {
+            // Set
+            $("#textGuess").html("<div style='font-size:70%;padding-bottom:5px;'>" + gameSelectedWord+ "</div>");
+        }       
 
         // Timeout
         countDown()
@@ -223,9 +230,11 @@ function checkWinner(data, msg) {
     // Check type
     if (typeof gameSelectedWord === 'string' && typeof msg === 'string') {
         // Check answer
+        console.log('Jawabanya => '+gameSelectedWord);
         if (gameSelectedWord.trim().toLowerCase() == msg.trim().toLowerCase()) {
             // Print Photo
-            addPhoto(data, "winner");
+            addContent("<span style='font-weight: bold;text-align: center;'>The Winner is...</span><br>"+addPhotoProfil(data.uniqueId, data.profilePictureUrl));
+
 
             // Sound
             playSound(4);
@@ -242,6 +251,12 @@ function checkWinner(data, msg) {
 
 function loadSetting() {
     // Load
+    if ($("#gameKata").val() === "") {
+        gameKata = false;
+    } else {
+        gameKata = true;
+    }
+    
     confComment = $("#confComment").prop('checked');
     confLike = $("#confLike").prop('checked');
     confShare = $("#confShare").prop('checked');
@@ -328,6 +343,11 @@ function addPhotoProfil(usernya,urlpathimg) {
 }
 
 function addPhotoGift(giftname,jumlah,urlpathimg) {
+    let profilnya = "<p align='center'>"+giftname+" <img src='"+urlpathimg+"' width='35' height='35'> x"+jumlah+"</p>";
+    return profilnya;    
+}
+
+function addWinner(giftname,jumlah,urlpathimg) {
     let profilnya = "<p align='center'>"+giftname+" <img src='"+urlpathimg+"' width='35' height='35'> x"+jumlah+"</p>";
     return profilnya;    
 }
