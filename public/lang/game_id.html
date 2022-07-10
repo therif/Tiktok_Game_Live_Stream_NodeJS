@@ -33,28 +33,43 @@
 				</div>
 				<div class="text-bold">Settings:</div>
 				<table class="mt-2 mb-3">
+
 					<input id="gameKata" type="hidden" value="true"/>
 					<tr><td><input id="confComment" type="checkbox" checked="true"/>&nbsp;&nbsp;</td><td>Comment</td></tr>
-					<tr><td><input id="confCommentTTS" type="checkbox" checked="false"/>&nbsp;&nbsp;</td><td>Comment To TTS</td></tr>
+					<tr><td><input id="confCommentPrint" type="checkbox" checked="false"/>&nbsp;&nbsp;</td><td>Print Comment</td></tr>
+					<tr><td><input id="confCommentTTS" type="checkbox" checked="false"/>&nbsp;&nbsp;</td><td>Comment to Voice</td></tr>
+					<tr><td>&nbsp;&nbsp;</td><td>&nbsp;&nbsp;</td></tr>
 					
 					<tr><td><input id="confLike" type="checkbox" checked="true"/>&nbsp;&nbsp;</td><td>Like</td></tr>
+					<tr><td><input id="confLikePrint" type="checkbox" checked="true"/>&nbsp;&nbsp;</td><td>Print Like</td></tr>
+					<tr><td><input id="confLikeTTS" type="checkbox" checked="true"/>&nbsp;&nbsp;</td><td>Liked to Voice</td></tr>
+					<tr><td>&nbsp;&nbsp;</td><td>&nbsp;&nbsp;</td></tr>
+
 					<tr><td><input id="confShare" type="checkbox" checked="true"/>&nbsp;&nbsp;</td><td>Share &amp; Follow</td></tr>
+					<tr><td><input id="confSharePrint" type="checkbox" checked="true"/>&nbsp;&nbsp;</td><td>Print Share &amp; Follow</td></tr>
+					<tr><td><input id="confShareTTS" type="checkbox" checked="true"/>&nbsp;&nbsp;</td><td>Share &amp; Follow to Voice</td></tr>
+					<tr><td>&nbsp;&nbsp;</td><td>&nbsp;&nbsp;</td></tr>
 					
 					<tr><td><input id="confJoin" type="checkbox" checked="true"/>&nbsp;&nbsp;</td><td>User Joined</td></tr>
-					<tr><td><input id="confJoinTTS" type="checkbox" checked="true"/>&nbsp;&nbsp;</td><td>Join To TTS</td></tr>
+					<tr><td><input id="confJoinPrint" type="checkbox" checked="true"/>&nbsp;&nbsp;</td><td>Print User Joined</td></tr>
+					<tr><td><input id="confJoinTTS" type="checkbox" checked="true"/>&nbsp;&nbsp;</td><td>Joined to Voice</td></tr>
+					<tr><td>&nbsp;&nbsp;</td><td>&nbsp;&nbsp;</td></tr>
 										
-					<tr><td><input id="confGiftTTS" type="checkbox" checked="true"/>&nbsp;&nbsp;</td><td>Gift To TTS</td></tr>
+					<tr><td><input id="confGiftTTS" type="checkbox" checked="true"/>&nbsp;&nbsp;</td><td>Gift To Voice</td></tr>
+					<tr><td>&nbsp;&nbsp;</td><td>&nbsp;&nbsp;</td></tr>
+					
 					<tr><td><input id="confPrintSound" type="checkbox" checked="true"/>&nbsp;&nbsp;</td><td>Sound Print</td></tr>
-
 					<tr><td><input id="confSayTTS" type="checkbox" checked="true"/>&nbsp;&nbsp;</td><td>CMD Say TTS</td></tr>
 					
 					<tr><td colspan="2"><button id="btnSave" class="mt-2">SAVE</button></td></tr>
 				</table>
 
-				<div class="text-bold"><select></select></div>
+				<div class="text-bold"><select hidden></select></div>
 				<div class="text-bold">Live Chat</div>
 				<div class="mb-3 mt-2">
-					<input id="targetUsername" type="text" placeholder="Enter @username" style="width:140px;" value="@nyanya_336"/>
+					<input id="targetUsername" type="text" placeholder="Enter @username" style="width:140px;" value="@pisanggabut"/>
+				</div>
+				<div class="mb-3 mt-2">
 					<button id="targetConnect">Connect</button>
 				</div>
 				<div>
