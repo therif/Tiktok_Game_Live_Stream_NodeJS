@@ -8,11 +8,21 @@ let gameKata = true;
 
 // Config
 let confComment = false;
+let confCommentTTS = false;
+let confCommentPrint = false;
+
 let confLike = false;
+let confLikeTTS = false;
+let confLikePrint = false;
+
 let confShare = false;
+let confShareTTS = false;
+let confSharePrint = false;
+
 let confJoin = false;
 let confJoinTTS = false;
-let confCommentTTS = false;
+let confJoinPrint = false;
+
 let confGiftTTS = false;
 let confPrintSound = false;
 let confSayTTS = false;
@@ -91,7 +101,7 @@ function speakTTS(msg) {
     //     wordgap: 5
     // });
 
-    doSpeakAsync(msg, 1.4, 1.2);
+    doSpeakAsync(msg);
 }
 
 function censor(word) {
@@ -259,15 +269,27 @@ function loadSetting() {
     } else {
         gameKata = true;
     }
-    
+
     confComment = $("#confComment").prop('checked');
+    confCommentTTS = $("#confCommentTTS").prop('checked');
+    confCommentPrint = $("#confCommentPrint").prop('checked');
+
     confLike = $("#confLike").prop('checked');
+    confLikeTTS = $("#confLikeTTS").prop('checked');
+    confLikePrint = $("#confLikePrint").prop('checked');
+
     confShare = $("#confShare").prop('checked');
+    confShareTTS = $("#confShareTTS").prop('checked');
+    confSharePrint = $("#confSharePrint").prop('checked');
+
     confJoin = $("#confJoin").prop('checked');
     confJoinTTS = $("#confJoinTTS").prop('checked');
-    confCommentTTS = $("#confCommentTTS").prop('checked');
+    confJoinPrint = $("#confJoinPrint").prop('checked');
+
     confGiftTTS = $("#confGiftTTS").prop('checked');
+
     confPrintSound = $("#confPrintSound").prop('checked');
+    confSayTTS = $("#confSayTTS").prop('checked');
 }
 
 /*
@@ -325,28 +347,27 @@ function addMessage(data, msg, skiptts=false) {
             if (!skiptts) speakTTS(cleanText);
         }       
 
+    } else if (command == "/next" || command == "/skip" || command == "/terus" || command == "/lanjut") {
+        loadGame();
+
     } else {
         // Check setting
-        if (confComment) {
-
-            if (!checkWinner(data, data.comment)) {
-            
+        if (!checkWinner(data, data.comment)) {
+            if (confCommentPrint) {
                 addContent("<span style='font-weight: bold;'>" + userName + "</span>: " + message);
+            }                
 
-                if (confCommentTTS) {                    
-                    if (!skiptts) {
-                        let tssMsg = MSG_COMMENT.replace("|username|", data.uniqueId);
-                        speakTTS(tssMsg+' '+message);
-                    }
-                } 
-
-                // Sound
-                if (confPrintSound) {
-                    playSound(1);    
+            if (confCommentTTS) {                    
+                if (!skiptts) {
+                    let tssMsg = MSG_COMMENT.replace("|username|", data.uniqueId);
+                    speakTTS(tssMsg+' '+message);
                 }
+            } 
+
+            // Sound
+            if (confPrintSound) {
+                playSound(1);    
             }
-            
-            
         }
         
     }
@@ -422,7 +443,10 @@ connection.on('like', (data) => {
         // Check setting
         if (confLike) {
             //addMessage(data, data.label.replace('{0:user}', '').replace('likes', `${data.likeCount} likes`));
-            addContent("<span style='font-weight: bold;'>" + data.uniqueId + "</span>: " + data.label.replace('{0:user}', '').replace('likes', `${data.likeCount} likes`));
+            if (confLikePrint){
+                addContent("<span style='font-weight: bold;'>" + data.uniqueId + "</span>: " + data.label.replace('{0:user}', '').replace('likes', `${data.likeCount} likes`));
+            }
+            
         }
     }
 
@@ -434,7 +458,9 @@ connection.on('social', (data) => {
     if (confShare) {
         // Print share
         //addMessage(data, data.label.replace('{0:user}', ''));
-        addContent("Thanks, <span style='font-weight: bold;'>" + data.uniqueId + "</span>: " + data.label.replace('{0:user}', '') + "<span style='font-style: italic;'>for Shared!</span>");
+        if (confSharePrint){
+            addContent("<span style='font-weight: bold;'>" + data.uniqueId + "</span> <span style='font-style: italic;'>Thanks for " + data.label.replace('{0:user}', '')+"</span>");
+        }
     }
 })
 
@@ -451,10 +477,13 @@ connection.on('member', (data) => {
         joinMsgDelay -= addDelay;
         // Check setting
         if (confJoin) {
-            // Print join
-            addMessage(data, "joined", true);
+            //addMessage(data, "joined", true);
+            if (confJoinPrint) {
+                addContent("<span style='font-weight: bold;'>" + data.uniqueId + "</span> <span style='font-style: italic;'>joined</span>");
+            }
+            
             if (confJoinTTS) {
-                let tssMsg = MSG_WELCOME_JOINED.replace("|username|", data.uniqueId);
+                let tssMsg = MSG_WELCOME_JOINED.replace("|username|", data.uniqueId.slice(0, 6));
                 speakTTS(tssMsg);
             }
         }

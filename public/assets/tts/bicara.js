@@ -1,5 +1,6 @@
 const synth = window.speechSynthesis;
 const voiceSelect = document.querySelector("select");
+var ttsproses = false;
 
 let voices = [];
 
@@ -41,18 +42,33 @@ if (speechSynthesis.onvoiceschanged !== undefined) {
   speechSynthesis.onvoiceschanged = populateVoiceList;
 }
 
-async function doSpeakAsync(msgnya, ratespdnya, pitchnya) {
-  speak(msgnya, ratespdnya, pitchnya);
+function checkTTSProses(delaynya, msgnya) {
+  setTimeout(function() { 
+    if (!ttsproses) {
+      speak(msgnya, true);
+    } else {
+      checkTTSProses(delaynya, msgnya); 
+    }
+  }, delaynya)
+}
+
+async function doSpeakAsync(msgnya) {
+  speak(msgnya);
 }
 
 
-function speak(msgnya, ratespdnya, pitchnya) {
+function speak(msgnya, repeated = false) {
   if (synth.speaking) {
     console.error("speechSynthesis.speaking");
+    
+    if (!repeated) {
+      checkTTSProses(1000, msgnya);
+    }
     return;
   }
 
   if (msgnya !== "") {
+    ttsproses = true;
     const utterThis = new SpeechSynthesisUtterance(msgnya);
 
     utterThis.onend = function (event) {
@@ -62,12 +78,27 @@ function speak(msgnya, ratespdnya, pitchnya) {
     utterThis.onerror = function (event) {
       console.error("SpeechSynthesisUtterance.onerror");
     };
-
-    const selectedOption = "Microsoft Gadis Online (Natural) - Indonesian (Indonesia)"; 
-    //Google Bahasa Indonesia 
-    //Microsoft Siti Online (Natural) - Javanese (Indonesia)
-    //Microsoft Gadis Online (Natural) - Indonesian (Indonesia)
-
+  
+    var selectedOption = "Google US English | en-US";
+    // INTERNET EXPLORER
+    if (navigator.userAgent.indexOf("MSIE") != -1 ) {
+      selectedOption = "Microsoft Gadis Online (Natural) - Indonesian (Indonesia)";
+      ratespdnya = 1.4;
+      pitchnya = 1.2;
+    }
+    // EDGE
+    else if (navigator.userAgent.indexOf("Edge") != -1 || navigator.userAgent.indexOf("Edg") != -1) {
+      selectedOption = "Microsoft Gadis Online (Natural) - Indonesian (Indonesia)";
+      ratespdnya = 1.4;
+      pitchnya = 1.2;
+    }
+    //CHROME
+    else if (navigator.userAgent.indexOf("Chrome") != -1 ) {
+      selectedOption = "Google Bahasa Indonesia";
+      ratespdnya = 1.2;
+      pitchnya = 1.2;
+    }
+    
     for (let i = 0; i < voices.length; i++) {
       if (voices[i].name === selectedOption) {
         utterThis.voice = voices[i];
@@ -78,8 +109,10 @@ function speak(msgnya, ratespdnya, pitchnya) {
     
     utterThis.pitch = pitchnya;
     utterThis.rate = ratespdnya;
-    synth.speak(utterThis);
+    synth.speak(utterThis);    
   }
+
+  ttsproses = false;
 }
 
 // pitch.onchange = function () {
