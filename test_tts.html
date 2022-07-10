@@ -6,18 +6,24 @@
 		<title>Tiktok Printer</title>
 		<link rel="stylesheet" href="assets/css/reset.css?v=1.0">
 		<link rel="stylesheet" href="assets/css/style.css?v=1.0">
-		<script type="text/javascript" src="assets/tts/speakClient.js"></script>
+		<script src='assets/tts/responsivevoice.js'></script>
 	</head>
 	<body>
 		<div class="main">
 			<div class="container">
+
+				if ('speechSynthesis' in window) {
+					// Speech Synthesis is supported 🎉
+				   }else{
+					 // Speech Synthesis is not Supported 😞 
+				   }
+				   
 				<br /><br />
 				<div class="text-center text-bold">Tiktok Printer</div>
 				<br /><br />
-				<a href="lang/game_en.html" class="d-block mb-3 text-center text-bold">💬 English</a><br />
-				<a href="lang/game_id.html" class="d-block mb-3 text-center text-bold">💬 Indonesian</a><br />
-				<a href="lang/game_kata_kalimat.html" class="d-block mb-3 text-center text-bold">💬 Kata Kalimat</a><br />
+                <input onclick="responsiveVoice.speak('test bahasa indonesia', 'Indonesian Female');" type='button' value='Play' /><br />
 			</div>
 		</div>
 	</body>
 </html>
+

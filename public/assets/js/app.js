@@ -2,17 +2,20 @@
 let connection = new TikTokIOConnection(undefined);
 let gameWords = [];
 let gamegameSelectedWord = null;
+let gameStarted = false;
 let gameTimer = null;
-let gameStatus = false;
+let gameKata = true;
 
 // Config
 let confComment = false;
 let confLike = false;
 let confShare = false;
 let confJoin = false;
-let confTTS = false;
+let confJoinTTS = false;
+let confCommentTTS = false;
 let confGiftTTS = false;
 let confPrintSound = false;
+let confSayTTS = false;
 
 // START
 $(document).ready(() => {
@@ -41,13 +44,19 @@ $(document).ready(() => {
 
     // Connect
     $("#targetConnect").click(function(e) {
-        // Check
-        if (gameStatus) {
-            let targetLive = $("#targetUsername").val();
-            connect(targetLive);
-        } else {
-            alert("Start game first!");
+
+        // Populate dummy
+        for (let i = 0; i < 10; i++) {
+            addContent("<div style='text-align:center;'>Welcome 🥳🥳🥳</div>");
+            addContent("<div style='text-align:center;'>Share, Comment and Like</div>");
+            addContent("<div style='text-align:center;'>Dapatkan Kata-kata Konyol! Lucu! dan Mungkin Bijak :D</div>");
         }
+
+        loadSetting();
+
+        let targetLive = $("#targetUsername").val();
+        connect(targetLive);
+
         
     });
 
@@ -59,21 +68,9 @@ $(document).ready(() => {
         //playSound(3);
         //playSound(4);
         //speakTTS(MSG_TEST);
-
-        // Populate dummy
-        //for (let i = 0; i < 30; i++) {
-            //addContent("<div style='text-align:center;'>Welcome 🥳🥳🥳</div>");
-        //}
-
-        addContent("<div style='text-align:center;'>Welcome 🥳🥳🥳</div>");
+        
         // Load game
         loadGame();
-
-        // Setting
-        loadSetting();
-
-        // Set
-        gameStatus = true;
     });
 
     // Save config
@@ -87,12 +84,14 @@ $(document).ready(() => {
 */
 
 function speakTTS(msg) {
-    speak(msg, {
-        amplitude: 100,
-        pitch: 50,
-        speed: 150,
-        wordgap: 5
-    });
+    // speak(msg, {
+    //     amplitude: 100,
+    //     pitch: 50,
+    //     speed: 150,
+    //     wordgap: 5
+    // });
+
+    doSpeakAsync(msg, 1.4, 1.2);
 }
 
 function censor(word) {
@@ -173,14 +172,20 @@ function loadGame() {
     // Check
     if (typeof gameSelectedWord === 'string') {
         // Normalize
-        splittedWord = gameSelectedWord.split("|");
-        gameSelectedWord = splittedWord[1];
+        if (gameKata) {
+            splittedWord = gameSelectedWord.split("|");
+            gameSelectedWord = splittedWord[1];
 
-        // Set
-        $("#textGuess").html("<div style='font-size:70%;padding-bottom:5px;'>" + splittedWord[0] + "</div>" + censor(gameSelectedWord));
+            $("#textGuess").html("<div style='font-size:70%;padding-bottom:5px;'>" + splittedWord[0] + "</div>" + censor(gameSelectedWord));
+        } else {
+            // Set
+            $("#textGuess").html("<div style='font-size:70%;padding-bottom:5px;'>" + gameSelectedWord+ "</div>");
+        }       
 
         // Timeout
         countDown()
+
+        gameStarted = true;
 
     } else {
         loadGame();
@@ -220,33 +225,47 @@ function loadGameKalimat() {
 }
 
 function checkWinner(data, msg) {
-    // Check type
-    if (typeof gameSelectedWord === 'string' && typeof msg === 'string') {
-        // Check answer
-        if (gameSelectedWord.trim().toLowerCase() == msg.trim().toLowerCase()) {
-            // Print Photo
-            addPhoto(data, "winner");
+    if (gameStarted){
 
-            // Sound
-            playSound(4);
+        console.log('Jawabanya => '+gameSelectedWord);
 
-            // Play TTS
-            let tssMsg = MSG_WINNER.replace("|username|", data.uniqueId);
-            speakTTS(tssMsg);
+        if (typeof gameSelectedWord === 'string' && typeof msg === 'string') {
+            // Check answer
+            //console.log('Jawabanya => '+gameSelectedWord);
+            if (gameSelectedWord.trim().toLowerCase() == msg.trim().toLowerCase()) {
+                // Print Photo
+                addContent("Answer is "+gameSelectedWord+", <span style='font-style: italic;text-align: center;'>The Winner is...</span><br>"+addPhotoProfil(data.uniqueId, data.profilePictureUrl));
 
-            // Reload game
-            loadGame();
+                // Sound
+                playSound(4);
+
+                // Play TTS
+                let tssMsg = MSG_WINNER.replace("|username|", data.uniqueId);
+                speakTTS(tssMsg);
+
+                // Reload game
+                loadGame();
+                return true;
+            }
         }
     }
+    return false;
 }
 
 function loadSetting() {
     // Load
+    if ($("#gameKata").val() === "") {
+        gameKata = false;
+    } else {
+        gameKata = true;
+    }
+    
     confComment = $("#confComment").prop('checked');
     confLike = $("#confLike").prop('checked');
     confShare = $("#confShare").prop('checked');
     confJoin = $("#confJoin").prop('checked');
-    confTTS = $("#confTTS").prop('checked');
+    confJoinTTS = $("#confJoinTTS").prop('checked');
+    confCommentTTS = $("#confCommentTTS").prop('checked');
     confGiftTTS = $("#confGiftTTS").prop('checked');
     confPrintSound = $("#confPrintSound").prop('checked');
 }
@@ -292,7 +311,7 @@ function addContent(payload) {
     content.animate({ scrollTop: content.get(0).scrollHeight}, 333);
 }
 
-function addMessage(data, msg) {
+function addMessage(data, msg, skiptts=false) {
     // DATA
     let userName = data.uniqueId;
     let message = sanitize(msg);
@@ -302,20 +321,31 @@ function addMessage(data, msg) {
     if (command == "/say" || command == "/ngomong") {
         // TTS
         let cleanText = message.replace("/say", "").replace("/ngomong", "");
-        if (confTTS) {
-            speakTTS(cleanText);
+        if (confSayTTS) {
+            if (!skiptts) speakTTS(cleanText);
         }       
 
     } else {
         // Check setting
         if (confComment) {
-            // Add
-            addContent("<span style='font-weight: bold;'>" + userName + "</span>: " + message);
 
-            // Sound
-            if (confPrintSound) {
-                playSound(1);    
+            if (!checkWinner(data, data.comment)) {
+            
+                addContent("<span style='font-weight: bold;'>" + userName + "</span>: " + message);
+
+                if (confCommentTTS) {                    
+                    if (!skiptts) {
+                        let tssMsg = MSG_COMMENT.replace("|username|", data.uniqueId);
+                        speakTTS(tssMsg+' '+message);
+                    }
+                } 
+
+                // Sound
+                if (confPrintSound) {
+                    playSound(1);    
+                }
             }
+            
             
         }
         
@@ -332,30 +362,26 @@ function addPhotoGift(giftname,jumlah,urlpathimg) {
     return profilnya;    
 }
 
+function addWinner(giftname,jumlah,urlpathimg) {
+    let profilnya = "<p align='center'>"+giftname+" <img src='"+urlpathimg+"' width='35' height='35'> x"+jumlah+"</p>";
+    return profilnya;    
+}
+
 function addGift(data) {
-    // DATA
-    let userName = data.uniqueId;
-    let cleanText = "Thank You "+userName;
-    let messagegift = "Thank You";
-    
+    // DATA    
     let tssMsg = MSG_GIFT.replace("|username|", data.uniqueId);
 
-    //addMessage(data, data.label.replace('{0:user}', '').replace('likes', `${data.likeCount} likes`));
- 
     if (data.giftType === 1 && !data.repeatEnd) {
         // Streak in progress => show only temporary
         console.log(`${data.uniqueId} is sending gift ${data.giftName} x${data.repeatCount}`);
         
         addContent(addPhotoProfil(data.uniqueId, data.profilePictureUrl) + addPhotoGift(data.giftName, data.repeatCount, data.giftPictureUrl));
 
-        // Sound
         if (confPrintSound) {
             playSound(1);    
         }
 
-        //add TTS
-        if (confGiftTTS) {            
-            //speakTTS(cleanText);
+        if (confGiftTTS) {          
             speakTTS(tssMsg);
         }
 
@@ -370,8 +396,9 @@ function addGift(data) {
             playSound(1);    
         }
 
-        //add TTS
-        speakTTS(cleanText);
+        if (confGiftTTS) {          
+            speakTTS(tssMsg);
+        }
     }
 
  
@@ -379,8 +406,7 @@ function addGift(data) {
 
 // New chat comment received
 connection.on('chat', (data) => {
-    addMessage(data, data.comment);
-    checkWinner(data, data.comment);
+    addMessage(data, data.comment, false);
 })
 
 // New gift received
@@ -395,10 +421,11 @@ connection.on('like', (data) => {
     if (typeof data.totalLikeCount === 'number') {
         // Check setting
         if (confLike) {
-            // Print like
-            addMessage(data, data.label.replace('{0:user}', '').replace('likes', `${data.likeCount} likes`));
+            //addMessage(data, data.label.replace('{0:user}', '').replace('likes', `${data.likeCount} likes`));
+            addContent("<span style='font-weight: bold;'>" + data.uniqueId + "</span>: " + data.label.replace('{0:user}', '').replace('likes', `${data.likeCount} likes`));
         }
     }
+
 })
 
 // Share, Follow
@@ -406,7 +433,8 @@ connection.on('social', (data) => {
     // Check setting
     if (confShare) {
         // Print share
-        addMessage(data, data.label.replace('{0:user}', ''));
+        //addMessage(data, data.label.replace('{0:user}', ''));
+        addContent("Thanks, <span style='font-weight: bold;'>" + data.uniqueId + "</span>: " + data.label.replace('{0:user}', '') + "<span style='font-style: italic;'>for Shared!</span>");
     }
 })
 
@@ -424,7 +452,11 @@ connection.on('member', (data) => {
         // Check setting
         if (confJoin) {
             // Print join
-            addMessage(data, "joined");
+            addMessage(data, "joined", true);
+            if (confJoinTTS) {
+                let tssMsg = MSG_WELCOME_JOINED.replace("|username|", data.uniqueId);
+                speakTTS(tssMsg);
+            }
         }
     }, joinMsgDelay);
 })
