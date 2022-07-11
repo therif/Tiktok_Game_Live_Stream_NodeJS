@@ -42,27 +42,29 @@ if (speechSynthesis.onvoiceschanged !== undefined) {
   speechSynthesis.onvoiceschanged = populateVoiceList;
 }
 
-function checkTTSProses(delaynya, msgnya) {
+function checkTTSProses(delaynya, msgnya, prioritas) {
   setTimeout(function() { 
     if (!ttsproses) {
       speak(msgnya, true);
     } else {
-      checkTTSProses(delaynya, msgnya); 
+      checkTTSProses(delaynya, msgnya, prioritas); 
     }
   }, delaynya)
 }
 
-async function doSpeakAsync(msgnya) {
-  speak(msgnya);
+async function doSpeakAsync(msgnya, prioritas) {
+  speak(msgnya, prioritas);
 }
 
 
-function speak(msgnya, repeated = false) {
+function speak(msgnya, prioritas, repeated = false) {
   if (synth.speaking) {
     console.error("speechSynthesis.speaking");
     
     if (!repeated) {
-      checkTTSProses(1000, msgnya);
+      if (prioritas < 2 ) {        
+        checkTTSProses(1000, msgnya, prioritas);
+      }
     }
     return;
   }
