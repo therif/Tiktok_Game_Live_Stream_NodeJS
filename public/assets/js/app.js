@@ -25,7 +25,13 @@ let confJoinPrint = false;
 
 let confGiftTTS = false;
 let confPrintSound = false;
+let confWinnerSound = false;
 let confSayTTS = false;
+
+
+let lastWinnerP1 = "";
+let lastWinnerP2 = "";
+let lastWinnerP3 = "";
 
 // START
 $(document).ready(() => {
@@ -93,15 +99,14 @@ $(document).ready(() => {
 * GAME PLAY
 */
 
-function speakTTS(msg) {
+function speakTTS(msg, prioritas = 9) {
     // speak(msg, {
     //     amplitude: 100,
     //     pitch: 50,
     //     speed: 150,
     //     wordgap: 5
     // });
-
-    doSpeakAsync(msg);
+    doSpeakAsync(msg, prioritas);
 }
 
 function censor(word) {
@@ -115,7 +120,12 @@ function censor(word) {
     for (let i = 0; i < length; i++) {
         let c = word.charAt(i);
         if (i >= range_start && i <= range_end) {
-            censored.push("*");
+            if (c == " " || c == "-") {
+                censored.push(c); 
+            } else {
+                censored.push("*");    
+            }
+            
         } else {
             censored.push(c);
         }
@@ -243,15 +253,22 @@ function checkWinner(data, msg) {
             // Check answer
             //console.log('Jawabanya => '+gameSelectedWord);
             if (gameSelectedWord.trim().toLowerCase() == msg.trim().toLowerCase()) {
-                // Print Photo
-                addContent("Answer is "+gameSelectedWord+", <span style='font-style: italic;text-align: center;'>The Winner is...</span><br>"+addPhotoProfil(data.uniqueId, data.profilePictureUrl));
+                // Print Photo // ubah photonya
+                if (lastWinnerP3 != lastWinnerP2) lastWinnerP3 = lastWinnerP2;
+                if (lastWinnerP2 != lastWinnerP1) lastWinnerP2 = lastWinnerP1;
+                lastWinnerP1 = data.uniqueId;
+                $("#winnerGuess").html(addPhotoProfil(lastWinnerP1, data.profilePictureUrl));
+                $("#winnerGuess-2").html("🏆 <span style='font-weight: bold;'>"+lastWinnerP2+"</span>");
+                $("#winnerGuess-3").html("🏆 <span style='font-weight: bold;'>"+lastWinnerP3+"</span>"); 
 
-                // Sound
-                playSound(4);
+                addContent("Answer is "+gameSelectedWord+", <span style='font-style: italic;text-align: center;'>The Winner is...</span>"+data.uniqueId);
+
+                // Sound Winner Hoeyy
+                if (confWinnerSound) playSound(4);
 
                 // Play TTS
                 let tssMsg = MSG_WINNER.replace("|username|", data.uniqueId);
-                speakTTS(tssMsg);
+                speakTTS(tssMsg, 4);
 
                 // Reload game
                 loadGame();
@@ -289,6 +306,8 @@ function loadSetting() {
     confGiftTTS = $("#confGiftTTS").prop('checked');
 
     confPrintSound = $("#confPrintSound").prop('checked');
+    confWinnerSound = $("#confWinnerSound").prop('checked');
+    
     confSayTTS = $("#confSayTTS").prop('checked');
 }
 
@@ -344,7 +363,7 @@ function addMessage(data, msg, skiptts=false) {
         // TTS
         let cleanText = message.replace("/say", "").replace("/ngomong", "");
         if (confSayTTS) {
-            if (!skiptts) speakTTS(cleanText);
+            if (!skiptts && cleanText.length >= 2) speakTTS(cleanText,8);
         }       
 
     } else if (command == "/next" || command == "/skip" || command == "/terus" || command == "/lanjut") {
@@ -358,7 +377,7 @@ function addMessage(data, msg, skiptts=false) {
             }                
 
             if (confCommentTTS) {                    
-                if (!skiptts) {
+                if (!skiptts && message.length >= 2) {
                     let tssMsg = MSG_COMMENT.replace("|username|", data.uniqueId);
                     speakTTS(tssMsg+' '+message);
                 }
@@ -403,7 +422,7 @@ function addGift(data) {
         }
 
         if (confGiftTTS) {          
-            speakTTS(tssMsg);
+            speakTTS(tssMsg, 1);
         }
 
     } else {
@@ -418,7 +437,7 @@ function addGift(data) {
         }
 
         if (confGiftTTS) {          
-            speakTTS(tssMsg);
+            speakTTS(tssMsg, 1);
         }
     }
 
@@ -483,7 +502,7 @@ connection.on('member', (data) => {
             }
             
             if (confJoinTTS) {
-                let tssMsg = MSG_WELCOME_JOINED.replace("|username|", data.uniqueId.slice(0, 6));
+                let tssMsg = MSG_WELCOME_JOINED.replace("|username|", data.uniqueId.slice(0, 8));
                 speakTTS(tssMsg);
             }
         }

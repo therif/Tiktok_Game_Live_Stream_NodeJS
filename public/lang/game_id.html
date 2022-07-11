@@ -59,6 +59,8 @@
 					<tr><td>&nbsp;&nbsp;</td><td>&nbsp;&nbsp;</td></tr>
 					
 					<tr><td><input id="confPrintSound" type="checkbox" checked="true"/>&nbsp;&nbsp;</td><td>Sound Print</td></tr>
+					<tr><td><input id="confWinnerSound" type="checkbox" />&nbsp;&nbsp;</td><td>Sound Winner</td></tr>
+					
 					<tr><td><input id="confSayTTS" type="checkbox" checked="true"/>&nbsp;&nbsp;</td><td>CMD Say TTS</td></tr>
 					
 					<tr><td colspan="2"><button id="btnSave" class="mt-2">SAVE</button></td></tr>
@@ -67,7 +69,7 @@
 				<div class="text-bold"><select hidden></select></div>
 				<div class="text-bold">Live Chat</div>
 				<div class="mb-3 mt-2">
-					<input id="targetUsername" type="text" placeholder="Enter @username" style="width:140px;" value="@pisanggabut"/>
+					<input id="targetUsername" type="text" placeholder="Enter @username" style="width:140px;" value="@moveupinc"/>
 				</div>
 				<div class="mb-3 mt-2">
 					<button id="targetConnect">Connect</button>
@@ -103,9 +105,29 @@
 							<td class="bottom-wrapper">
 								<div class="bottom-bar">
 									<div class="bottom-content">
-										<div id="textGuess" class="text-guess blink">***</div>
-										<div class="text-caption">💬 Comment <span class="text-bold">/say</span> <i>`your text`</i></div>
-										<div class="text-caption" style="margin-bottom: 0rem;">🙋‍♀️🙋‍♂️ Guess the word above for print your profile picture</div>
+										
+										<table class="table">
+											<tr>
+												<td width="30%" height="100%">
+													<div class="text-caption" style="margin-bottom: 0rem;">🏆 Last Winner</div>
+													<div id="winnerGuess" class="text-winner blink"></div>
+
+													<div class="text-winner2" id="winnerGuess-2">asda</div>
+													<div class="text-winner2" id="winnerGuess-3">asdas</div>
+												</td>
+												<td>&nbsp;</td>
+												<td>
+													
+													<div class="text-caption" style="margin-bottom: 0rem;">🙋‍♀️🙋‍♂️ Tebak Kata, Pemenang akan di cetak!</div>
+													<div id="textGuess" class="text-guess blink">***</div>
+													<div class="text-caption">💬 Komentar anda <span class="text-bold">automatis dibaca</span></div>
+													<div class="text-caption">💬 <span class="text-bold">Gift Terbang</span> <span style="font-style: italic;">akan auto dicetak dan di baca</span></div>
+													<div class="text-caption">💬 <span class="text-bold">Follow, Komen, Share</span> <span style="font-style: italic;">pasti dicetak dan di baca</span></div>
+													<div class="text-caption">💬 Ketik <span class="text-bold">/skip</span> <span style="font-style: italic;">untuk next atau skip tebak kata</span></div>
+													<div class="text-caption">💬 Ketik <span class="text-bold">/say</span> <span style="font-style: italic;">isi kata kata</span></div>
+												</td>
+											</tr>
+										</table>
 									</div>
 								</div>
 							</td>

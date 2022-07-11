@@ -90,11 +90,21 @@
 }
 .text-winner {
 	font-weight: bold;
+	padding: .5rem .75rem;
 	color: #512da8;
 	margin-top: .25rem;
 	overflow-wrap: break-word !important;
 	word-break: break-all !important;
 	font-size: 1.3rem;
+	border-radius: 5px;
+	border: 2px solid #35e544;
+}
+.text-winner2 {
+	font-weight: bold;
+	font-size: 1.0rem;
+	text-align: left;
+	margin-top: 0.5rem;
+	margin-bottom: 0.25rem;
 }
 .text-bold {
 	font-weight: bold;
@@ -105,8 +115,8 @@
 .text-caption {
 	font-size: 1.1rem;
 	text-align: center;
-	margin-top: 1rem;
-	margin-bottom: 1rem;
+	margin-top: 0.5rem;
+	margin-bottom: 0.5rem;
 }
 .printer .item {
 	font-size: 1.1rem;
