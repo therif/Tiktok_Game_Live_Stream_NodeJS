@@ -1,5 +1,6 @@
 // DATA
 let connection = new TikTokIOConnection(undefined);
+
 let gameWords = [];
 let gamegameSelectedWord = null;
 let gameStarted = false;
@@ -35,6 +36,30 @@ let lastWinnerP3 = "";
 
 // START
 $(document).ready(() => {
+    
+    //database test
+    console.log('Proses DB');
+    window.fdb = new ForerunnerDB();
+    db = fdb.db('test');
+    
+    // Ask forerunner to load any persistent data previously
+    // saved for this collection
+    db.collection('todo').load();
+
+    // Add the new item to ForerunnerDB's item collection
+		db.collection('todo').insert({
+			name: 'Fish',
+			type: 'Sale',
+			val: Math.round(Math.random() * 100),
+			day: window.counter++
+		});
+
+		// Now we've added the item to the collection, tell
+		// forerunner to persist the data
+		db.collection('todo').save();
+
+    console.log('End DB');
+
     // Resize
     function resizeContainer() {
         let height = window.innerHeight;
@@ -412,6 +437,7 @@ function addGift(data) {
     let tssMsg = MSG_GIFT.replace("|username|", data.uniqueId);
 
     if (data.giftType === 1 && !data.repeatEnd) {
+        
         // Streak in progress => show only temporary
         console.log(`${data.uniqueId} is sending gift ${data.giftName} x${data.repeatCount}`);
         
@@ -426,6 +452,7 @@ function addGift(data) {
         }
 
     } else {
+        
         // Streak ended or non-streakable gift => process the gift with final repeat_count
         console.log(`${data.uniqueId} has sent gift ${data.giftName} x${data.repeatCount}`);
         
@@ -459,8 +486,11 @@ connection.on('gift', (data) => {
 // Like
 connection.on('like', (data) => {
     if (typeof data.totalLikeCount === 'number') {
+
+        MemDB.insert({id: 1, Name: "Halil", Surname: "Kutluturk", Age: 45, City: "Berlin", Country: "Germany"});
         // Check setting
         if (confLike) {
+            dbku.likemasuk(data.uniqueId, data.likeCount)
             //addMessage(data, data.label.replace('{0:user}', '').replace('likes', `${data.likeCount} likes`));
             if (confLikePrint){
                 addContent("<span style='font-weight: bold;'>" + data.uniqueId + "</span>: " + data.label.replace('{0:user}', '').replace('likes', `${data.likeCount} likes`));

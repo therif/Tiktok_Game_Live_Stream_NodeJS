@@ -24,6 +24,21 @@
 	display:absolute;
 	z-index: 1;
 }
+.top-left {
+	position: absolute;
+	top: 8px;
+	left: 16px;
+	z-index: 100;
+}
+.top-right {
+	position: absolute;
+	top: 30px;
+	right: 20px;	
+	opacity: 1;
+	text-align: right;
+	font-weight: bold;
+	z-index: 101;
+}
 .printer {
 	background-image: url('../media/printer.png');
 	background-repeat: no-repeat;
@@ -33,7 +48,7 @@
 	background-position-y: center;
 	height: 100vh;
 	width: 100%;
-	z-index: 1000;
+	z-index: 99;
 	position: fixed;
 }
 .printer .table {
@@ -150,6 +165,21 @@
 .blink {
 	animation: blinker 1s infinite;
 }
+.rainbow-text-wbg {
+	background-image: linear-gradient(to left, violet, indigo, blue, green, yellow, orange, red);
+  }
+.rainbow-text-bl {
+	background-image: linear-gradient(to left, violet, indigo, blue, green, yellow, orange, red);
+	-webkit-background-clip: text;
+}
+.rainbow-text {
+	background-image: repeating-linear-gradient(45deg, violet, indigo, blue, green, yellow, orange, red, violet);
+	/* background-image: linear-gradient(to left, violet, indigo, blue, green, yellow, orange, red); */
+	color: transparent;
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	animation: rainbow 8s ease infinite;
+}
 
 @keyframes blinker {
 	from { opacity: 1.0; }
@@ -166,4 +196,29 @@
 	100% {
 		background-position: 0% 50%;
 	}
+}
+@keyframes rainbow { 
+    0%{background-position:0% 50%}
+    50%{background-position:100% 25%}
+    100%{background-position:0% 50%}
+}
+
+.rainbow-text-animated {
+    text-align: center;
+    text-decoration: underline;
+    font-size: 32px;
+    font-family: monospace;
+    letter-spacing: 5px;
+}
+.rainbow_text_animated_run {
+    background: linear-gradient(to right, #6666ff, #0099ff , #00ff00, #ff3399, #6666ff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: rainbow_animation 6s ease-in-out infinite;
+    background-size: 400% 100%;
+}
+@keyframes rainbow_animation {
+    0%,100% {background-position: 0 0;}
+    50% {background-position: 100% 0;}
 }
