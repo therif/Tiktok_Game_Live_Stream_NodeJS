@@ -497,7 +497,7 @@ function showtopgift(jmlnya = 5) {
     if (hasil != "") {
         let texthl = "<span class='rainbow-text-animated rainbow_text_animated_run'>TOP GIFTER</span><br>";
         for (let i = 0; i < hasil.length; i++) {
-            texthl += "<img src='"+hasil[i].pp+"' width='20' height='20'></img> <span class='rainbow-text-animated rainbow_text_animated_run'>"+hasil[i].uniqueId+"</span> - <span class='rainbow-text-wbg'>"+hasil[i].total+"</span><br>";
+            texthl += "<img src='"+hasil[i].pp+"' width='10' height='10'></img> <span class='rainbow-text-animated rainbow_text_animated_run'>"+hasil[i].uniqueId+"</span> <span class='rainbow-text-animated rainbow_text_animated_run'>[<b>"+hasil[i].total+"</b>]</span><br>";
           }        
         $("#listtopgifter").html(texthl);
     }
@@ -548,7 +548,7 @@ function showtoplike(jmlnya = 5) {
     if (hasil != "") {
         let texthl = "<span class='rainbow-text-animated rainbow_text_animated_run'>Top Liked</span><br>";
         for (let i = 0; i < hasil.length; i++) {
-            texthl += "<img src='"+hasil[i].pp+"' width='20' height='20'></img> <span class='rainbow-text'>"+hasil[i].uniqueId+"</span> <span class='rainbow-text-animated rainbow_text_animated_run'>"+hasil[i].total+"</span><br>";
+            texthl += "<img src='"+hasil[i].pp+"' width='10' height='10'></img> <span class='rainbow-text'>"+hasil[i].uniqueId+"</span> <span class='rainbow-text-animated rainbow_text_animated_run'><b>"+hasil[i].total+"</b></span><br>";
           }
         
         $("#listtopliker").html(texthl);
