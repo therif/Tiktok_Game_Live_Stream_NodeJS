@@ -1,7 +1,7 @@
 {
-	"name": "tiktok-printer",
+	"name": "therif-tiktok-printer",
 	"version": "1.0.0",
-	"description": "Tiktok Printer",
+	"description": "Tiktok Printer by therif",
 	"main": "server.js",
 	"dependencies": {
 		"dotenv": "^16.0.0",
@@ -9,13 +9,10 @@
 		"forerunnerdb": "^2.0.22",
 		"ip": "^1.1.8",
 		"socket.io": "^4.4.1",
-		"tiktok-live-connector": "^0.9.21"
+		"tiktok-live-connector": "^0.9.22"
 	},
 	"scripts": {
 		"app": "node server.js"
 	},
-	"author": "adierebel",
-	"devDependencies": {
-		"@types/nedb": "^1.8.12"
-	}
+	"author": "therif"
 }

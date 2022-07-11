@@ -36,9 +36,16 @@ let lastWinnerP3 = "";
 
 let fdb = new ForerunnerDB();
 db = fdb.db('ttPrint');
-db.collection('like').load();
-db.collection('gift').load();
-db.collection('komen').load();
+dblike = db.collection("like", {primaryKey: "uniqueId"});
+dbgift = db.collection("gift", {primaryKey: "uniqueId"});
+dbkomen = db.collection("komen");
+// db.collection('like').load();
+// db.collection('gift').load();
+// db.collection('komen').load();
+
+dblike.load();
+dbgift.load();
+dbkomen.load();
     
 
 // START
@@ -377,14 +384,18 @@ function addMessage(data, msg, skiptts=false) {
     } else if (command == "/next" || command == "/skip" || command == "/terus" || command == "/lanjut") {
         loadGame();
 
+    } else if (command == "/sound" || command == "/suara") {
+        let suaranya = message.split(" ")[1];
+        if (suaranya == "yey") playSound(4);
+
     } else {
         // Check setting
         if (!checkWinner(data, data.comment)) {
-            db.collection('komen').insert({
+            dbkomen.insert({
                 uniqueId: data.uniqueId,
                 komentar: message
             });
-            db.collection('komen').save();
+            dbkomen.save();
 
             if (confCommentPrint) {
                 addContent("<span style='font-weight: bold;'>" + userName + "</span>: " + message);
@@ -426,38 +437,122 @@ function addGift(data) {
     let tssMsg = MSG_GIFT.replace("|username|", data.uniqueId);
 
     if (data.giftType === 1 && !data.repeatEnd) {
-        
-        // Streak in progress => show only temporary
-        console.log(`${data.uniqueId} is sending gift ${data.giftName} x${data.repeatCount}`);
-        
+        addgift_toDB(data.uniqueId, data.repeatCount, data.profilePictureUrl);
         addContent(addPhotoProfil(data.uniqueId, data.profilePictureUrl) + addPhotoGift(data.giftName, data.repeatCount, data.giftPictureUrl));
 
-        if (confPrintSound) {
-            playSound(1);    
-        }
-
-        if (confGiftTTS) {          
-            speakTTS(tssMsg, 1);
-        }
+        if (confPrintSound) playSound(1);
+        if (confGiftTTS) speakTTS(tssMsg, 1);
 
     } else {
-        
-        // Streak ended or non-streakable gift => process the gift with final repeat_count
-        console.log(`${data.uniqueId} has sent gift ${data.giftName} x${data.repeatCount}`);
-        
+        addgift_toDB(data.uniqueId, data.repeatCount, data.profilePictureUrl);
         addContent(addPhotoProfil(data.uniqueId, data.profilePictureUrl) + addPhotoGift(data.giftName, data.repeatCount, data.giftPictureUrl));
 
-        // Sound
-        if (confPrintSound) {
-            playSound(1);    
-        }
+        if (confPrintSound) playSound(1);
+        if (confGiftTTS) speakTTS(tssMsg, 1);
+    } 
+}
 
-        if (confGiftTTS) {          
-            speakTTS(tssMsg, 1);
-        }
+function addgift_toDB(usernmnya, newgiftcount, pathpp) {
+    var hasil;
+    var ttlgivenya = 0;
+    hasil = dbgift.find({
+                uniqueId: {
+                    $eq: usernmnya
+                }
+            });           
+    
+    if (hasil != "") {        
+        ttlgivenya = hasil[0].total+newgiftcount;
+        dbgift.update({
+            uniqueId: usernmnya
+        }, {
+            $replace: {
+                total: ttlgivenya,
+                pp: pathpp
+            }
+        });
+    } else {
+        ttlgivenya = newgiftcount;
+        dbgift.insert({
+            uniqueId: usernmnya,
+            total: newgiftcount,
+            pp: pathpp
+        });
+    }            
+    dbgift.save();
+    showtopgift(5);
+    return ttlgivenya;
+}
+
+function showtopgift(jmlnya = 5) {
+    var hasil;
+
+    hasil = dbgift.find({}, {
+                $page: 0,
+                $limit: jmlnya,
+                $orderBy: {
+                    total: -1 // Sort ascending or -1 for descending
+                }
+    }); 
+    if (hasil != "") {
+        let texthl = "<span class='rainbow-text-animated rainbow_text_animated_run'>TOP GIFTER</span><br>";
+        for (let i = 0; i < hasil.length; i++) {
+            texthl += "<img src='"+hasil[i].pp+"' width='20' height='20'></img> <span class='rainbow-text-animated rainbow_text_animated_run'>"+hasil[i].uniqueId+"</span> - <span class='rainbow-text-wbg'>"+hasil[i].total+"</span><br>";
+          }        
+        $("#listtopgifter").html(texthl);
     }
+}
 
- 
+function addlike_toDB(usernmnya, likescount, pathpp) {
+    var hasil;
+    var ttllikenya = 0;
+    hasil = dblike.find({
+                uniqueId: {
+                    $eq: usernmnya
+                }
+            });           
+    
+    if (hasil != "") {        
+        ttllikenya = hasil[0].total+likescount;
+        dblike.update({
+            uniqueId: usernmnya
+        }, {
+            $replace: {                
+                total: ttllikenya,
+                pp: pathpp
+            }
+        });
+    } else {
+        ttllikenya = likescount;
+        dblike.insert({
+            uniqueId: usernmnya,            
+            total: likescount,
+            pp: pathpp
+        });
+    }            
+    dblike.save();
+    showtoplike(5);
+    return ttllikenya;
+}
+
+function showtoplike(jmlnya = 5) {
+    var hasil;
+
+    hasil = dblike.find({}, {
+                $page: 0,
+                $limit: jmlnya,
+                $orderBy: {
+                    total: -1 // Sort ascending or -1 for descending
+                }
+    }); 
+    if (hasil != "") {
+        let texthl = "<span class='rainbow-text-animated rainbow_text_animated_run'>Top Liked</span><br>";
+        for (let i = 0; i < hasil.length; i++) {
+            texthl += "<img src='"+hasil[i].pp+"' width='20' height='20'></img> <span class='rainbow-text'>"+hasil[i].uniqueId+"</span> <span class='rainbow-text-animated rainbow_text_animated_run'>"+hasil[i].total+"</span><br>";
+          }
+        
+        $("#listtopliker").html(texthl);
+    }
 }
 
 // New chat comment received
@@ -475,44 +570,14 @@ connection.on('gift', (data) => {
 // Like
 connection.on('like', (data) => {
     if (typeof data.totalLikeCount === 'number') {
-        // Check setting
         if (confLike) {
-            var hasil = "";
-            hasil = db.collection('like').find({
-                        uniqueId: {
-                            "$eq": data.uniqueId
-                        }
-                    });
-            console.log("Hasilney: "+hasil);
-            
-            if (hasil !== "") {
-                db.collection("like").update({
-                    uniqueId: data.uniqueId
-                }, {
-                    $addToSet: {
-                        arr: {
-                            //uniqueId: data.uniqueId,
-                            total: total+data.likeCount
-                        }
-                    }
-                });
-            } else {
-                db.collection('like').insert({
-                    uniqueId: data.uniqueId,
-                    total: data.likeCount
-                });
-            }
-            
-            db.collection('like').save();
-
-            //addMessage(data, data.label.replace('{0:user}', '').replace('likes', `${data.likeCount} likes`));
+            var ttllikenya = addlike_toDB(data.uniqueId, data.likeCount, data.profilePictureUrl);
             if (confLikePrint){
-                addContent("<span style='font-weight: bold;'>" + data.uniqueId + "</span>: " + data.label.replace('{0:user}', '').replace('likes', `${data.likeCount} likes`));
-            }
-            
+                let tssMsg = MSG_LIKE_SEND.replace("|username|", "<span style='font-weight: bold;'>"+data.uniqueId+"</span>").replace("|like|",data.likeCount).replace("|totallike|",ttllikenya);
+                addContent("<span style='font-style: italic;'>"+tssMsg+"</span>");
+            }            
         }
     }
-
 })
 
 // Share, Follow
@@ -553,7 +618,14 @@ connection.on('member', (data) => {
     }, joinMsgDelay);
 })
 
-// End
+connection.on('connected', () => {
+    $('#stateText').text('Connected!.');
+})
+
+connection.on('disconnected', () => {
+    $('#stateText').text('Disconnected.');
+})
+
 connection.on('streamEnd', () => {
     $('#stateText').text('Stream ended.');
 })

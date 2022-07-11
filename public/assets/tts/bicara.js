@@ -104,7 +104,7 @@ function speak(msgnya, prioritas, repeated = false) {
     for (let i = 0; i < voices.length; i++) {
       if (voices[i].name === selectedOption) {
         utterThis.voice = voices[i];
-        console.log(i+" SEL -> "+voices[i].name+" | "+voices[i].lang);
+        //console.log(i+" SEL -> "+voices[i].name+" | "+voices[i].lang);
         break;
       }
     }

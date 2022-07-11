@@ -26,17 +26,27 @@
 }
 .top-left {
 	position: absolute;
-	top: 8px;
-	left: 16px;
+	font-size: 14px;
+	font-family: monospace;
+	text-align: left;
+	font-weight: normal;
+	margin: auto;
+	margin-top: 10px;
+  	margin-left: 10px;
 	z-index: 100;
 }
 .top-right {
 	position: absolute;
-	top: 30px;
-	right: 20px;	
+	font-size: 14px;
+	font-family: monospace;
 	opacity: 1;
 	text-align: right;
 	font-weight: bold;
+	right: 0px;
+	/*margin: auto;*/
+	margin-top: 10px;
+	margin-left: auto; 
+	margin-right: 200px;
 	z-index: 101;
 }
 .printer {
@@ -206,9 +216,7 @@
 .rainbow-text-animated {
     text-align: center;
     text-decoration: underline;
-    font-size: 32px;
-    font-family: monospace;
-    letter-spacing: 5px;
+    /*letter-spacing: 5px;*/
 }
 .rainbow_text_animated_run {
     background: linear-gradient(to right, #6666ff, #0099ff , #00ff00, #ff3399, #6666ff);
