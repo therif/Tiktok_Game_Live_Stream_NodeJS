@@ -34,32 +34,15 @@ let lastWinnerP1 = "";
 let lastWinnerP2 = "";
 let lastWinnerP3 = "";
 
+let fdb = new ForerunnerDB();
+db = fdb.db('ttPrint');
+db.collection('like').load();
+db.collection('gift').load();
+db.collection('komen').load();
+    
+
 // START
-$(document).ready(() => {
-    
-    //database test
-    console.log('Proses DB');
-    window.fdb = new ForerunnerDB();
-    db = fdb.db('test');
-    
-    // Ask forerunner to load any persistent data previously
-    // saved for this collection
-    db.collection('todo').load();
-
-    // Add the new item to ForerunnerDB's item collection
-		db.collection('todo').insert({
-			name: 'Fish',
-			type: 'Sale',
-			val: Math.round(Math.random() * 100),
-			day: window.counter++
-		});
-
-		// Now we've added the item to the collection, tell
-		// forerunner to persist the data
-		db.collection('todo').save();
-
-    console.log('End DB');
-
+$(document).ready(() => { 
     // Resize
     function resizeContainer() {
         let height = window.innerHeight;
@@ -397,6 +380,12 @@ function addMessage(data, msg, skiptts=false) {
     } else {
         // Check setting
         if (!checkWinner(data, data.comment)) {
+            db.collection('komen').insert({
+                uniqueId: data.uniqueId,
+                komentar: message
+            });
+            db.collection('komen').save();
+
             if (confCommentPrint) {
                 addContent("<span style='font-weight: bold;'>" + userName + "</span>: " + message);
             }                
@@ -486,11 +475,36 @@ connection.on('gift', (data) => {
 // Like
 connection.on('like', (data) => {
     if (typeof data.totalLikeCount === 'number') {
-
-        MemDB.insert({id: 1, Name: "Halil", Surname: "Kutluturk", Age: 45, City: "Berlin", Country: "Germany"});
         // Check setting
         if (confLike) {
-            dbku.likemasuk(data.uniqueId, data.likeCount)
+            var hasil = "";
+            hasil = db.collection('like').find({
+                        uniqueId: {
+                            "$eq": data.uniqueId
+                        }
+                    });
+            console.log("Hasilney: "+hasil);
+            
+            if (hasil !== "") {
+                db.collection("like").update({
+                    uniqueId: data.uniqueId
+                }, {
+                    $addToSet: {
+                        arr: {
+                            //uniqueId: data.uniqueId,
+                            total: total+data.likeCount
+                        }
+                    }
+                });
+            } else {
+                db.collection('like').insert({
+                    uniqueId: data.uniqueId,
+                    total: data.likeCount
+                });
+            }
+            
+            db.collection('like').save();
+
             //addMessage(data, data.label.replace('{0:user}', '').replace('likes', `${data.likeCount} likes`));
             if (confLikePrint){
                 addContent("<span style='font-weight: bold;'>" + data.uniqueId + "</span>: " + data.label.replace('{0:user}', '').replace('likes', `${data.likeCount} likes`));
@@ -525,7 +539,7 @@ connection.on('member', (data) => {
     setTimeout(() => {
         joinMsgDelay -= addDelay;
         // Check setting
-        if (confJoin) {
+        if (confJoin) {           
             //addMessage(data, "joined", true);
             if (confJoinPrint) {
                 addContent("<span style='font-weight: bold;'>" + data.uniqueId + "</span> <span style='font-style: italic;'>joined</span>");
