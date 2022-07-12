@@ -108,6 +108,47 @@ $(document).ready(() => {
     $("#btnSave").click(function(e) {
         loadSetting();
     });
+
+    $("#keAtas").click(function(e) {
+        var terpilih = $('#pilihanPindah').find(":selected").val();
+        if (terpilih == 'topleft') {
+            var iVal = parseInt($('#listtopliker').css('margin-top'));
+            $("#listtopliker").css("margin-top",iVal - 1);     
+        } else if (terpilih == 'topright') {
+            var iVal = parseInt($('#listtopgifter').css('margin-top'));
+            $("#listtopgifter").css("margin-top",iVal - 1);  
+        }            
+    });
+    $("#keBawah").click(function(e) {
+        var terpilih = $('#pilihanPindah').find(":selected").val();
+        if (terpilih == 'topleft') {
+            var iVal = parseInt($('#listtopliker').css('margin-top'));
+            $("#listtopliker").css("margin-top",iVal + 1);     
+        } else if (terpilih == 'topright') {
+            var iVal = parseInt($('#listtopgifter').css('margin-top'));
+            $("#listtopgifter").css("margin-top",iVal + 1);  
+        }            
+    });
+    $("#keKiri").click(function(e) {
+        var terpilih = $('#pilihanPindah').find(":selected").val();
+        if (terpilih == 'topleft') {
+            var iVal = parseInt($('#listtopliker').css('margin-left'));
+            $("#listtopliker").css("margin-left",iVal - 1);     
+        } else if (terpilih == 'topright') {
+            var iVal = parseInt($('#listtopgifter').css('margin-right'));
+            $("#listtopgifter").css("margin-right",iVal + 1);  
+        }            
+    });
+    $("#keKanan").click(function(e) {
+        var terpilih = $('#pilihanPindah').find(":selected").val();
+        if (terpilih == 'topleft') {
+            var iVal = parseInt($('#listtopliker').css('margin-left'));
+            $("#listtopliker").css("margin-left",iVal + 1);     
+        } else if (terpilih == 'topright') {
+            var iVal = parseInt($('#listtopgifter').css('margin-right'));
+            $("#listtopgifter").css("margin-right",iVal - 1);  
+        }            
+    });
 })
 
 /*
@@ -437,14 +478,14 @@ function addGift(data) {
     let tssMsg = MSG_GIFT.replace("|username|", data.uniqueId);
 
     if (data.giftType === 1 && !data.repeatEnd) {
-        addgift_toDB(data.uniqueId, data.repeatCount, data.profilePictureUrl);
+        addgift_toDB(data.uniqueId, data.repeatCount);
         addContent(addPhotoProfil(data.uniqueId, data.profilePictureUrl) + addPhotoGift(data.giftName, data.repeatCount, data.giftPictureUrl));
 
         if (confPrintSound) playSound(1);
         if (confGiftTTS) speakTTS(tssMsg, 1);
 
     } else {
-        addgift_toDB(data.uniqueId, data.repeatCount, data.profilePictureUrl);
+        addgift_toDB(data.uniqueId, data.repeatCount);
         addContent(addPhotoProfil(data.uniqueId, data.profilePictureUrl) + addPhotoGift(data.giftName, data.repeatCount, data.giftPictureUrl));
 
         if (confPrintSound) playSound(1);
@@ -452,7 +493,7 @@ function addGift(data) {
     } 
 }
 
-function addgift_toDB(usernmnya, newgiftcount, pathpp) {
+function addgift_toDB(usernmnya, newgiftcount) {
     var hasil;
     var ttlgivenya = 0;
     hasil = dbgift.find({
@@ -467,16 +508,14 @@ function addgift_toDB(usernmnya, newgiftcount, pathpp) {
             uniqueId: usernmnya
         }, {
             $replace: {
-                total: ttlgivenya,
-                pp: pathpp
+                total: ttlgivenya
             }
         });
     } else {
         ttlgivenya = newgiftcount;
         dbgift.insert({
             uniqueId: usernmnya,
-            total: newgiftcount,
-            pp: pathpp
+            total: newgiftcount
         });
     }            
     dbgift.save();
@@ -495,15 +534,15 @@ function showtopgift(jmlnya = 5) {
                 }
     }); 
     if (hasil != "") {
-        let texthl = "<span class='rainbow-text-animated rainbow_text_animated_run'>TOP GIFTER</span><br>";
+        let texthl = "<span class='rainbow-text-bl'>TOP GIFTER1</span><br>";
         for (let i = 0; i < hasil.length; i++) {
-            texthl += "<img src='"+hasil[i].pp+"' width='10' height='10'></img> <span class='rainbow-text-animated rainbow_text_animated_run'>"+hasil[i].uniqueId+"</span> <span class='rainbow-text-animated rainbow_text_animated_run'>[<b>"+hasil[i].total+"</b>]</span><br>";
+            texthl += "<span class='rainbow-text-animated rainbow_text_animated_run'>"+hasil[i].uniqueId+"</span>🙏<span class='rainbow-text-animated rainbow_text_animated_run'><b>"+hasil[i].total+"</b></span><br>";
           }        
         $("#listtopgifter").html(texthl);
     }
 }
 
-function addlike_toDB(usernmnya, likescount, pathpp) {
+function addlike_toDB(usernmnya, likescount) {
     var hasil;
     var ttllikenya = 0;
     hasil = dblike.find({
@@ -518,16 +557,14 @@ function addlike_toDB(usernmnya, likescount, pathpp) {
             uniqueId: usernmnya
         }, {
             $replace: {                
-                total: ttllikenya,
-                pp: pathpp
+                total: ttllikenya
             }
         });
     } else {
         ttllikenya = likescount;
         dblike.insert({
             uniqueId: usernmnya,            
-            total: likescount,
-            pp: pathpp
+            total: likescount
         });
     }            
     dblike.save();
@@ -548,7 +585,7 @@ function showtoplike(jmlnya = 5) {
     if (hasil != "") {
         let texthl = "<span class='rainbow-text-animated rainbow_text_animated_run'>Top Liked</span><br>";
         for (let i = 0; i < hasil.length; i++) {
-            texthl += "<img src='"+hasil[i].pp+"' width='10' height='10'></img> <span class='rainbow-text'>"+hasil[i].uniqueId+"</span> <span class='rainbow-text-animated rainbow_text_animated_run'><b>"+hasil[i].total+"</b></span><br>";
+            texthl += "<span class='rainbow-text-animated rainbow_text_animated_run'><b>"+hasil[i].total+"</b></span>💪<span class='rainbow-text'>"+hasil[i].uniqueId+"</span><br>";
           }
         
         $("#listtopliker").html(texthl);
@@ -571,7 +608,7 @@ connection.on('gift', (data) => {
 connection.on('like', (data) => {
     if (typeof data.totalLikeCount === 'number') {
         if (confLike) {
-            var ttllikenya = addlike_toDB(data.uniqueId, data.likeCount, data.profilePictureUrl);
+            var ttllikenya = addlike_toDB(data.uniqueId, data.likeCount);
             if (confLikePrint){
                 let tssMsg = MSG_LIKE_SEND.replace("|username|", "<span style='font-weight: bold;'>"+data.uniqueId+"</span>").replace("|like|",data.likeCount).replace("|totallike|",ttllikenya);
                 addContent("<span style='font-style: italic;'>"+tssMsg+"</span>");

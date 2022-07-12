@@ -162,6 +162,16 @@
 		padding: 1.5rem .75rem;
 	}
 }
+.text-garis-bawah {
+    text-decoration: underline;
+}
+.text-tebal {
+    font-weight: bold;
+}
+.text-miring {
+    font-style: italic;
+}
+
 .animation {
 	background: linear-gradient(-45deg, #d66745, #1885ad, #b8265e, #16b48f);
 	background-size: 400% 400%;
@@ -177,14 +187,14 @@
 	animation: blinker 1s infinite;
 }
 .rainbow-text-wbg {
-	background-image: linear-gradient(to left, violet, indigo, blue, green, yellow, orange, red);
+	background-image: linear-gradient(to left, violet, indigo, blue, green, red);
   }
 .rainbow-text-bl {
-	background-image: linear-gradient(to left, violet, indigo, blue, green, yellow, orange, red);
+	background-image: linear-gradient(to left, violet, indigo, blue, green, red);
 	-webkit-background-clip: text;
 }
 .rainbow-text {
-	background-image: repeating-linear-gradient(45deg, violet, indigo, blue, green, yellow, orange, red, violet);
+	background-image: repeating-linear-gradient(45deg, violet, indigo, blue, green, red, violet);
 	/* background-image: linear-gradient(to left, violet, indigo, blue, green, yellow, orange, red); */
 	color: transparent;
 	-webkit-background-clip: text;
