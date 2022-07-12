@@ -1,6 +1,17 @@
 // DATA
-let connection = new TikTokIOConnection(undefined);
+let fdb = new ForerunnerDB();
+let db = fdb.db('ttPrint');
+let dbsetting = db.collection("setting", {capped: true, size: 1});
+let dblike = db.collection("like", {primaryKey: "uniqueId"});
+let dbgift = db.collection("gift", {primaryKey: "uniqueId"});
+let dbkomen = db.collection("komen");
+dbsetting.load();
+dblike.load();
+dbgift.load();
+dbkomen.load();
 
+
+let connection = new TikTokIOConnection(undefined);
 let gameWords = [];
 let gamegameSelectedWord = null;
 let gameStarted = false;
@@ -8,6 +19,13 @@ let gameTimer = null;
 let gameKata = true;
 
 // Config
+    var hasilcfg = dbsetting.find();
+    var num = dblike.count();
+    console.log(num); 
+    console.log(hasilcfg);
+
+
+let usernameLive = "";
 let confComment = false;
 let confCommentTTS = false;
 let confCommentPrint = false;
@@ -29,24 +47,9 @@ let confPrintSound = false;
 let confWinnerSound = false;
 let confSayTTS = false;
 
-
 let lastWinnerP1 = "";
 let lastWinnerP2 = "";
-let lastWinnerP3 = "";
-
-let fdb = new ForerunnerDB();
-db = fdb.db('ttPrint');
-dblike = db.collection("like", {primaryKey: "uniqueId"});
-dbgift = db.collection("gift", {primaryKey: "uniqueId"});
-dbkomen = db.collection("komen");
-// db.collection('like').load();
-// db.collection('gift').load();
-// db.collection('komen').load();
-
-dblike.load();
-dbgift.load();
-dbkomen.load();
-    
+let lastWinnerP3 = ""; 
 
 // START
 $(document).ready(() => { 
@@ -85,10 +88,9 @@ $(document).ready(() => {
 
         loadSetting();
 
-        let targetLive = $("#targetUsername").val();
-        connect(targetLive);
-
-        
+        usernameLive = $("#targetUsername").val();        
+        connect(usernameLive);
+        console.log(usernameLive);
     });
 
     // Test
@@ -149,6 +151,8 @@ $(document).ready(() => {
             $("#listtopgifter").css("margin-right",iVal - 1);  
         }            
     });
+
+    firstLoadGetSetting();
 })
 
 /*
@@ -365,6 +369,61 @@ function loadSetting() {
     confWinnerSound = $("#confWinnerSound").prop('checked');
     
     confSayTTS = $("#confSayTTS").prop('checked');
+
+    usernameLive = $("#targetUsername").val();
+
+    firstSaveSetting();
+}
+
+function firstSaveSetting() {
+    dbsetting.insert({
+        "usernameLive": usernameLive,
+        "confComment": confComment,
+        "confCommentTTS": confCommentTTS,
+        "confCommentPrint": confCommentPrint,
+        "confLike": confLike,
+        "confLikeTTS": confLikeTTS,
+        "confLikePrint": confLikePrint,
+        "confShare": confShare,
+        "confShareTTS": confShareTTS,
+        "confSharePrint": confSharePrint,
+        "confJoin": confJoin,
+        "confJoinTTS": confJoinTTS,
+        "confJoinPrint": confJoinPrint,
+        "confGiftTTS": confGiftTTS,
+        "confPrintSound": confPrintSound,
+        "confWinnerSound": confWinnerSound,
+        "confSayTTS": confSayTTS
+    });
+    dbsetting.save();
+}
+
+function firstLoadGetSetting() {
+
+    $("#confComment").prop('checked', confComment);
+    $("#confCommentTTS").prop('checked',confCommentTTS);
+    $("#confCommentPrint").prop('checked',confCommentPrint);
+
+    $("#confLike").prop('checked',confLike);
+    $("#confLikeTTS").prop('checked',confLikeTTS);
+    $("#confLikePrint").prop('checked',confLikePrint);
+
+    $("#confShare").prop('checked',confShare);
+    $("#confShareTTS").prop('checked',confShareTTS);
+    $("#confSharePrint").prop('checked',confSharePrint);
+
+    $("#confJoin").prop('checked',confJoin);
+    $("#confJoinTTS").prop('checked',confJoinTTS);
+    $("#confJoinPrint").prop('checked',confJoinPrint);
+
+    $("#confGiftTTS").prop('checked',confGiftTTS);
+
+    $("#confPrintSound").prop('checked',confPrintSound);
+    $("#confWinnerSound").prop('checked',confWinnerSound);
+    
+    $("#confSayTTS").prop('checked',confSayTTS);
+
+    $("#targetUsername").val(usernameLive);
 }
 
 /*
