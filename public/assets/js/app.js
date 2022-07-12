@@ -323,7 +323,7 @@ function checkWinner(data, msg) {
                 if (confWinnerSound) playSound(4);
 
                 // Play TTS
-                let tssMsg = MSG_WINNER.replace("|username|", data.uniqueId);
+                let tssMsg = MSG_WINNER.replace("|username|", removeEmojis(data.uniqueId));
                 speakTTS(tssMsg, 4);
 
                 // Reload game
@@ -390,6 +390,11 @@ function connect(targetLive) {
 function sanitize(text) {
     return text.replace(/</g, '&lt;')
 }
+function removeEmojis (string) {
+    var regex = /(?:[\u2700-\u27bf]|(?:\ud83c[\udde6-\uddff]){2}|[\ud800-\udbff][\udc00-\udfff]|[\u0023-\u0039]\ufe0f?\u20e3|\u3299|\u3297|\u303d|\u3030|\u24c2|\ud83c[\udd70-\udd71]|\ud83c[\udd7e-\udd7f]|\ud83c\udd8e|\ud83c[\udd91-\udd9a]|\ud83c[\udde6-\uddff]|\ud83c[\ude01-\ude02]|\ud83c\ude1a|\ud83c\ude2f|\ud83c[\ude32-\ude3a]|\ud83c[\ude50-\ude51]|\u203c|\u2049|[\u25aa-\u25ab]|\u25b6|\u25c0|[\u25fb-\u25fe]|\u00a9|\u00ae|\u2122|\u2139|\ud83c\udc04|[\u2600-\u26FF]|\u2b05|\u2b06|\u2b07|\u2b1b|\u2b1c|\u2b50|\u2b55|\u231a|\u231b|\u2328|\u23cf|[\u23e9-\u23f3]|[\u23f8-\u23fa]|\ud83c\udccf|\u2934|\u2935|[\u2190-\u21ff])/g;
+  
+    return string.replace(regex, '');
+  }
 
 function isPendingStreak(data) {
     return data.giftType === 1 && !data.repeatEnd;
@@ -444,8 +449,9 @@ function addMessage(data, msg, skiptts=false) {
 
             if (confCommentTTS) {                    
                 if (!skiptts && message.length >= 2) {
-                    let tssMsg = MSG_COMMENT.replace("|username|", data.uniqueId);
-                    speakTTS(tssMsg+' '+message);
+                    let tssMsg = MSG_COMMENT.replace("|username|", removeEmojis(data.uniqueId));
+                    let cleanpesan = removeEmojis(message);
+                    if (cleanpesan.trim() != "") speakTTS(tssMsg+' '+message);
                 }
             } 
 
@@ -534,7 +540,7 @@ function showtopgift(jmlnya = 5) {
                 }
     }); 
     if (hasil != "") {
-        let texthl = "<span class='rainbow-text-bl'>TOP GIFTER1</span><br>";
+        let texthl = "<span class='rainbow-text text-garis-bawah'>TOP GIFTER</span><br>";
         for (let i = 0; i < hasil.length; i++) {
             texthl += "<span class='rainbow-text-animated rainbow_text_animated_run'>"+hasil[i].uniqueId+"</span>🙏<span class='rainbow-text-animated rainbow_text_animated_run'><b>"+hasil[i].total+"</b></span><br>";
           }        
@@ -583,7 +589,7 @@ function showtoplike(jmlnya = 5) {
                 }
     }); 
     if (hasil != "") {
-        let texthl = "<span class='rainbow-text-animated rainbow_text_animated_run'>Top Liked</span><br>";
+        let texthl = "<span class='rainbow-text text-garis-bawah'>Top Liked</span><br>";
         for (let i = 0; i < hasil.length; i++) {
             texthl += "<span class='rainbow-text-animated rainbow_text_animated_run'><b>"+hasil[i].total+"</b></span>💪<span class='rainbow-text'>"+hasil[i].uniqueId+"</span><br>";
           }
@@ -648,7 +654,7 @@ connection.on('member', (data) => {
             }
             
             if (confJoinTTS) {
-                let tssMsg = MSG_WELCOME_JOINED.replace("|username|", data.uniqueId.slice(0, 8));
+                let tssMsg = MSG_WELCOME_JOINED.replace("|username|", removeEmojis(data.uniqueId).slice(0, 8));
                 speakTTS(tssMsg);
             }
         }
