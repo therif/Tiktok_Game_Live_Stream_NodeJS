@@ -31,8 +31,8 @@
 	text-align: left;
 	font-weight: bold;
 	margin: auto;
-	margin-top: 50px;
-  	margin-left: 28px;
+	margin-top: 105px;
+  	margin-left: 56px;
 	z-index: 100;
 }
 .top-right {
@@ -44,9 +44,9 @@
 	font-weight: bold;
 	right: 18px;
 	/*margin: auto;*/
-	margin-top: 60px;
+	margin-top: 170px;
 	margin-left: auto; 
-	margin-right: 200px;
+	margin-right: 210px;
 	z-index: 101;
 }
 .printer {

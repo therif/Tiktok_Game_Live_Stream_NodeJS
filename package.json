@@ -9,7 +9,7 @@
 		"forerunnerdb": "^2.0.22",
 		"ip": "^1.1.8",
 		"socket.io": "^4.4.1",
-		"tiktok-live-connector": "^0.9.22"
+		"tiktok-live-connector": "^0.9.25"
 	},
 	"scripts": {
 		"app": "node server.js"

@@ -312,16 +312,16 @@ function checkWinner(data, msg) {
         if (typeof gameSelectedWord === 'string' && typeof msg === 'string') {
             // Check answer
             //console.log('Jawabanya => '+gameSelectedWord);
-            if (gameSelectedWord.trim().toLowerCase() == msg.trim().toLowerCase()) {
+            if ((gameSelectedWord.trim().toLowerCase() == msg.trim().toLowerCase()) || gameSelectedWord.trim().toLowerCase().replace('-', ' ') == msg.trim().toLowerCase().replace('-', ' ')) {
                 // Print Photo // ubah photonya
-                if (lastWinnerP3 != lastWinnerP2) lastWinnerP3 = lastWinnerP2;
-                if (lastWinnerP2 != lastWinnerP1) lastWinnerP2 = lastWinnerP1;
+                lastWinnerP3 = lastWinnerP2;
+                lastWinnerP2 = lastWinnerP1;
                 lastWinnerP1 = data.uniqueId;
                 $("#winnerGuess").html(addPhotoProfil(lastWinnerP1, data.profilePictureUrl));
                 $("#winnerGuess-2").html("🏆 <span style='font-weight: bold;'>"+lastWinnerP2+"</span>");
                 $("#winnerGuess-3").html("🏆 <span style='font-weight: bold;'>"+lastWinnerP3+"</span>"); 
 
-                addContent("Answer is "+gameSelectedWord+", <span style='font-style: italic;text-align: center;'>The Winner is...</span>"+data.uniqueId);
+                addContent("Answer is "+gameSelectedWord+", <span style='font-style: italic;text-align: center;'>The Winner is...</span><br><span style='font-weight: bold;text-align: center;'>"+data.uniqueId+"</span>");
 
                 // Sound Winner Hoeyy
                 if (confWinnerSound) playSound(4);
@@ -528,8 +528,8 @@ function addPhotoProfil(usernya,urlpathimg) {
     return profilnya;    
 }
 
-function addPhotoGift(giftname,jumlah,urlpathimg) {
-    let profilnya = "<p align='center'>"+giftname+" <img src='"+urlpathimg+"' width='35' height='35'> x"+jumlah+"</p>";
+function addPhotoGift(giftname,jumlah,count,urlpathimg) {
+    let profilnya = "<p align='center'>"+giftname+" <img src='"+urlpathimg+"' width='35' height='35'>x"+count+"   ["+jumlah+"]</p>";
     return profilnya;    
 }
 
@@ -543,15 +543,17 @@ function addGift(data) {
     let tssMsg = MSG_GIFT.replace("|username|", data.uniqueId);
 
     if (data.giftType === 1 && !data.repeatEnd) {
-        addgift_toDB(data.uniqueId, data.repeatCount);
-        addContent(addPhotoProfil(data.uniqueId, data.profilePictureUrl) + addPhotoGift(data.giftName, data.repeatCount, data.giftPictureUrl));
+        let jmlAsliDiamon = data.diamondCount * data.repeatCount;
+        addgift_toDB(data.uniqueId, data.jmlAsliDiamon);
+        addContent(addPhotoProfil(data.uniqueId, data.profilePictureUrl) + addPhotoGift(data.giftName, jmlAsliDiamon, data.repeatCount, data.giftPictureUrl));
 
         if (confPrintSound) playSound(1);
         if (confGiftTTS) speakTTS(tssMsg, 1);
 
     } else {
-        addgift_toDB(data.uniqueId, data.repeatCount);
-        addContent(addPhotoProfil(data.uniqueId, data.profilePictureUrl) + addPhotoGift(data.giftName, data.repeatCount, data.giftPictureUrl));
+        let jmlAsliDiamon = data.diamondCount * data.repeatCount;
+        addgift_toDB(data.uniqueId, jmlAsliDiamon);        
+        addContent(addPhotoProfil(data.uniqueId, data.profilePictureUrl) + addPhotoGift(data.giftName, jmlAsliDiamon, data.repeatCount, data.giftPictureUrl));
 
         if (confPrintSound) playSound(1);
         if (confGiftTTS) speakTTS(tssMsg, 1);
