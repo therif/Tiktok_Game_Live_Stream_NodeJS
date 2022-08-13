@@ -2,12 +2,13 @@
 let fdb = new ForerunnerDB();
 let db = fdb.db('ttPrint');
 let dbsetting = db.collection("setting", {capped: true, size: 1});
+let dbsetpos = db.collection("setposisi", {capped: true, size: 1});
 let dblike = db.collection("like", {primaryKey: "uniqueId"});
 let dbgift = db.collection("gift", {primaryKey: "uniqueId"});
 let dbkomen = db.collection("komen");
-dbsetting.load();
-dblike.load();
-dbgift.load();
+//dbsetting.load();
+//dblike.load();
+//dbgift.load();
 dbkomen.load();
 
 
@@ -18,14 +19,9 @@ let gameStarted = false;
 let gameTimer = null;
 let gameKata = true;
 
-// Config
-    var hasilcfg = dbsetting.find();
-    var num = dblike.count();
-    console.log(num); 
-    console.log(hasilcfg);
-
-
+let namaPakaiNickname = true;
 let usernameLive = "";
+
 let confComment = false;
 let confCommentTTS = false;
 let confCommentPrint = false;
@@ -33,6 +29,7 @@ let confCommentPrint = false;
 let confLike = false;
 let confLikeTTS = false;
 let confLikePrint = false;
+let confLikePopup = false;
 
 let confShare = false;
 let confShareTTS = false;
@@ -50,6 +47,70 @@ let confSayTTS = false;
 let lastWinnerP1 = "";
 let lastWinnerP2 = "";
 let lastWinnerP3 = ""; 
+
+    // Config
+    dbsetting.load(function (err) {
+        if (err) {
+            console.error(err);
+            process.exit(1);
+        }        
+    
+        for (let item of dbsetting.find()) {
+            namaPakaiNickname = item.namaPakaiNickname;
+            usernameLive = item.usernameLive;
+
+            confComment = item.confComment;
+            confCommentTTS = item.confCommentTTS;
+            confCommentPrint = item.confCommentPrint;
+
+            confLike = item.confLike;
+            confLikeTTS = item.confLikeTTS;
+            confLikePrint = item.confLikePrint;
+            confLikePopup = item.confLikePopup;
+
+            confShare = item.confShare;
+            confShareTTS = item.confShareTTS;
+            confSharePrint = item.confSharePrint;
+
+            confJoin = item.confJoin;
+            confJoinTTS = item.confJoinTTS;
+            confJoinPrint = item.confJoinPrint;
+
+            confGiftTTS = item.confGiftTTS;
+            confPrintSound = item.confPrintSound;
+            confWinnerSound = item.confWinnerSound;
+            confSayTTS = item.confSayTTS;
+        }
+        firstLoadGetSetting();
+    });
+
+    dbsetpos.load(function (err) {
+        if (err) {
+            console.error(err);
+            process.exit(1);
+        }        
+    
+        for (let item of dbsetpos.find()) {
+        }
+        //
+    });
+
+    dbgift.load(function (err) {
+        if (err) {
+            console.error(err);
+            process.exit(1);
+        }
+        showtopgift();
+    });
+
+    dblike.load(function (err) {
+        if (err) {
+            console.error(err);
+            process.exit(1);
+        }
+        showtoplike();
+    });
+
 
 // START
 $(document).ready(() => { 
@@ -94,7 +155,7 @@ $(document).ready(() => {
     });
 
     // Test
-    $("#btnPrepare").click(function(e) {
+    $("#btnStartGame").click(function(e) {
         // Check sound
         //playSound(1);
         //playSound(2);
@@ -103,6 +164,7 @@ $(document).ready(() => {
         //speakTTS(MSG_TEST);
         
         // Load game
+        firstLoadGetSetting();
         loadGame();
     });
 
@@ -119,7 +181,10 @@ $(document).ready(() => {
         } else if (terpilih == 'topright') {
             var iVal = parseInt($('#listtopgifter').css('margin-top'));
             $("#listtopgifter").css("margin-top",iVal - 1);  
-        }            
+        } else if (terpilih == 'popuplike') {
+            var iVal = parseInt($('#popuplike').css('margin-top'));
+            $("#popuplike").css("margin-top",iVal - 1);  
+        } 
     });
     $("#keBawah").click(function(e) {
         var terpilih = $('#pilihanPindah').find(":selected").val();
@@ -129,7 +194,10 @@ $(document).ready(() => {
         } else if (terpilih == 'topright') {
             var iVal = parseInt($('#listtopgifter').css('margin-top'));
             $("#listtopgifter").css("margin-top",iVal + 1);  
-        }            
+        } else if (terpilih == 'popuplike') {
+            var iVal = parseInt($('#popuplike').css('margin-top'));
+            $("#popuplike").css("margin-top",iVal + 1);  
+        } 
     });
     $("#keKiri").click(function(e) {
         var terpilih = $('#pilihanPindah').find(":selected").val();
@@ -139,7 +207,10 @@ $(document).ready(() => {
         } else if (terpilih == 'topright') {
             var iVal = parseInt($('#listtopgifter').css('margin-right'));
             $("#listtopgifter").css("margin-right",iVal + 1);  
-        }            
+        } else if (terpilih == 'popuplike') {
+            var iVal = parseInt($('#popuplike').css('margin-right'));
+            $("#popuplike").css("margin-right",iVal + 1);  
+        } 
     });
     $("#keKanan").click(function(e) {
         var terpilih = $('#pilihanPindah').find(":selected").val();
@@ -149,10 +220,19 @@ $(document).ready(() => {
         } else if (terpilih == 'topright') {
             var iVal = parseInt($('#listtopgifter').css('margin-right'));
             $("#listtopgifter").css("margin-right",iVal - 1);  
-        }            
+        } else if (terpilih == 'popuplike') {
+            var iVal = parseInt($('#popuplike').css('margin-right'));
+            $("#popuplike").css("margin-right",iVal - 1);  
+        }           
     });
 
-    firstLoadGetSetting();
+    $("#btTestPopup").click(function(e) {
+
+        var sKata = "Kata katanya Test<br>asdasdas<br>asdas";
+        showpopuplike(sKata);
+    });
+   
+
 })
 
 /*
@@ -317,11 +397,11 @@ function checkWinner(data, msg) {
                 lastWinnerP3 = lastWinnerP2;
                 lastWinnerP2 = lastWinnerP1;
                 lastWinnerP1 = data.uniqueId;
-                $("#winnerGuess").html(addPhotoProfil(lastWinnerP1, data.profilePictureUrl));
+                $("#winnerGuess").html(addPhotoProfil(data.nickname, data.uniqueId, data.profilePictureUrl));
                 $("#winnerGuess-2").html("🏆 <span style='font-weight: bold;'>"+lastWinnerP2+"</span>");
                 $("#winnerGuess-3").html("🏆 <span style='font-weight: bold;'>"+lastWinnerP3+"</span>"); 
 
-                addContent("Answer is "+gameSelectedWord+", <span style='font-style: italic;text-align: center;'>The Winner is...</span><br><span style='font-weight: bold;text-align: center;'>"+data.uniqueId+"</span>");
+                addContent("<center>Answer is "+gameSelectedWord+", <span style='font-style: italic;'>The Winner is...</span><br><span style='font-weight: bold;'>"+data.uniqueId+"</span><center>");
 
                 // Sound Winner Hoeyy
                 if (confWinnerSound) playSound(4);
@@ -354,6 +434,7 @@ function loadSetting() {
     confLike = $("#confLike").prop('checked');
     confLikeTTS = $("#confLikeTTS").prop('checked');
     confLikePrint = $("#confLikePrint").prop('checked');
+    confLikePopup = $("#confLikePopup").prop('checked');
 
     confShare = $("#confShare").prop('checked');
     confShareTTS = $("#confShareTTS").prop('checked');
@@ -384,6 +465,7 @@ function firstSaveSetting() {
         "confLike": confLike,
         "confLikeTTS": confLikeTTS,
         "confLikePrint": confLikePrint,
+        "confLikePopup": confLikePopup,
         "confShare": confShare,
         "confShareTTS": confShareTTS,
         "confSharePrint": confSharePrint,
@@ -399,7 +481,7 @@ function firstSaveSetting() {
 }
 
 function firstLoadGetSetting() {
-
+    console.log("LoadSetting: "+ usernameLive);
     $("#confComment").prop('checked', confComment);
     $("#confCommentTTS").prop('checked',confCommentTTS);
     $("#confCommentPrint").prop('checked',confCommentPrint);
@@ -407,6 +489,7 @@ function firstLoadGetSetting() {
     $("#confLike").prop('checked',confLike);
     $("#confLikeTTS").prop('checked',confLikeTTS);
     $("#confLikePrint").prop('checked',confLikePrint);
+    $("#confLikePopup").prop('checked',confLikePopup);    
 
     $("#confShare").prop('checked',confShare);
     $("#confShareTTS").prop('checked',confShareTTS);
@@ -424,6 +507,16 @@ function firstLoadGetSetting() {
     $("#confSayTTS").prop('checked',confSayTTS);
 
     $("#targetUsername").val(usernameLive);
+}
+
+function showpopuplike(sKata) {
+    $("#windowtextlike").html("<span style='text-align:right;'>" + sKata+ "</span>");
+    $("#popuplike").css("visibility","visible");
+
+    var delayInMilliseconds = 2000;
+    setTimeout(function() {
+        $("#popuplike").css("visibility","hidden");
+    }, delayInMilliseconds);
 }
 
 /*
@@ -523,8 +616,8 @@ function addMessage(data, msg, skiptts=false) {
     }
 }
 
-function addPhotoProfil(usernya,urlpathimg) {
-    let profilnya = "<center><span style='font-weight: bold;'>" + usernya + "</span><br><img src='"+urlpathimg+"'></center><br>";
+function addPhotoProfil(nickname, usernya, urlpathimg) {
+    let profilnya = "<center><span style='font-weight: bold;'>" + nickname + "</span><br><img src='"+urlpathimg+"'><br><span style='font-weight: bold;'>" + usernya + "</span></center>";
     return profilnya;    
 }
 
@@ -545,7 +638,7 @@ function addGift(data) {
     if (data.giftType === 1 && !data.repeatEnd) {
         let jmlAsliDiamon = data.diamondCount * data.repeatCount;
         addgift_toDB(data.uniqueId, data.jmlAsliDiamon);
-        addContent(addPhotoProfil(data.uniqueId, data.profilePictureUrl) + addPhotoGift(data.giftName, jmlAsliDiamon, data.repeatCount, data.giftPictureUrl));
+        addContent(addPhotoProfil(data.nickname, data.uniqueId, data.profilePictureUrl) + addPhotoGift(data.giftName, jmlAsliDiamon, data.repeatCount, data.giftPictureUrl));
 
         if (confPrintSound) playSound(1);
         if (confGiftTTS) speakTTS(tssMsg, 1);
@@ -553,7 +646,7 @@ function addGift(data) {
     } else {
         let jmlAsliDiamon = data.diamondCount * data.repeatCount;
         addgift_toDB(data.uniqueId, jmlAsliDiamon);        
-        addContent(addPhotoProfil(data.uniqueId, data.profilePictureUrl) + addPhotoGift(data.giftName, jmlAsliDiamon, data.repeatCount, data.giftPictureUrl));
+        addContent(addPhotoProfil(data.nickname, data.uniqueId, data.profilePictureUrl) + addPhotoGift(data.giftName, jmlAsliDiamon, data.repeatCount, data.giftPictureUrl));
 
         if (confPrintSound) playSound(1);
         if (confGiftTTS) speakTTS(tssMsg, 1);
@@ -676,9 +769,13 @@ connection.on('like', (data) => {
     if (typeof data.totalLikeCount === 'number') {
         if (confLike) {
             var ttllikenya = addlike_toDB(data.uniqueId, data.likeCount);
-            if (confLikePrint){
+            if (confLikePrint || confLikePopup){
                 let tssMsg = MSG_LIKE_SEND.replace("|username|", "<span style='font-weight: bold;'>"+data.uniqueId+"</span>").replace("|like|",data.likeCount).replace("|totallike|",ttllikenya);
-                addContent("<span style='font-style: italic;'>"+tssMsg+"</span>");
+                if (confLikePopup) {
+                    showpopuplike("<span style='font-style: italic;'>"+tssMsg+"</span>");
+                } else {
+                    addContent("<span style='font-style: italic;'>"+tssMsg+"</span>");
+                }
             }            
         }
     }
@@ -699,7 +796,7 @@ connection.on('social', (data) => {
 // Member join
 let joinMsgDelay = 0;
 connection.on('member', (data) => {
-    let addDelay = 250;
+    let addDelay = 250;    
     if (joinMsgDelay > 500) addDelay = 100;
     if (joinMsgDelay > 1000) addDelay = 0;
 
@@ -708,14 +805,14 @@ connection.on('member', (data) => {
     setTimeout(() => {
         joinMsgDelay -= addDelay;
         // Check setting
-        if (confJoin) {           
+        if (confJoin) {            
             //addMessage(data, "joined", true);
-            if (confJoinPrint) {
-                addContent("<span style='font-weight: bold;'>" + data.uniqueId + "</span> <span style='font-style: italic;'>joined</span>");
+            if (confJoinPrint) {                
+                addContent("<span style='font-weight: bold;'>" + namanya + "</span> <span style='font-style: italic;'>joined</span>");
             }
             
             if (confJoinTTS) {
-                let tssMsg = MSG_WELCOME_JOINED.replace("|username|", removeEmojis(data.uniqueId).slice(0, 8));
+                let tssMsg = MSG_WELCOME_JOINED.replace("|username|", removeEmojis(namanya).slice(0, 8));
                 speakTTS(tssMsg);
             }
         }

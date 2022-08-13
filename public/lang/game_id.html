@@ -30,7 +30,7 @@
 					<tr><td>Remain Words</td><td>&nbsp;:&nbsp;</td><td id="gameWords">&infin;</td></tr>
 				</table>
 				<div class="mb-3">
-					<button id="btnPrepare">START GAME</button>
+					<button id="btnStartGame">START GAME</button>
 				</div>
 				<div class="text-bold">Settings:</div>
 				<table class="mt-2 mb-3">
@@ -42,7 +42,8 @@
 					<tr><td>&nbsp;&nbsp;</td><td>&nbsp;&nbsp;</td></tr>
 					
 					<tr><td><input id="confLike" type="checkbox" checked="true"/>&nbsp;&nbsp;</td><td>Like</td></tr>
-					<tr><td><input id="confLikePrint" type="checkbox" checked="true"/>&nbsp;&nbsp;</td><td>Print Like</td></tr>
+					<tr><td><input id="confLikePrint" type="checkbox" checked="false"/>&nbsp;&nbsp;</td><td>Print Like</td></tr>
+					<tr><td><input id="confLikePopup" type="checkbox" checked="true"/>&nbsp;&nbsp;</td><td>Like as Popup</td></tr>
 					<tr><td><input id="confLikeTTS" type="checkbox" checked="true"/>&nbsp;&nbsp;</td><td>Liked to Voice</td></tr>
 					<tr><td>&nbsp;&nbsp;</td><td>&nbsp;&nbsp;</td></tr>
 
@@ -80,6 +81,8 @@
 					<select id="pilihanPindah">				
 						<option value="topleft">Top Left</option>
 						<option value="topright">Top Right</option>
+						<option value="popuplike">Like Popup</option>
+						
 					</select>
 					<br>
 					<button id="keAtas">Atas</button><button id="keBawah">Bawah</button><br>
@@ -87,7 +90,12 @@
 					
 				</div>
 
-				
+				<div class="mb-3 mt-2">
+					<label for="pindah">Log View :</label><br>
+					<br>
+					<button id="btTestPopup">Test Popup</button> <button id="btLogGifter">Gift</button><br>
+					
+				</div>
 
 				<div>
 					<audio id="sfx1" class="d-block">
@@ -106,8 +114,15 @@
 				</div>
 			</div>
 			<div class="container">
+				
 				<div class="top-left" id="listtopliker"><span class="rainbow-text text-garis-bawah">Top Liked</span></div>
 				<div class="top-right" id="listtopgifter"><span class="rainbow-text text-garis-bawah">TOP GIFTER</span></div>
+				
+				<div class="popuplike" id="popuplike">
+					<div class="popuphitam">
+						<div class="windowtext" id="windowtextlike"><span>Tesrts asjd asjkldas klsa</span></div>
+					</div>
+				</div>
 
 				<video class="background" autoplay muted loop>
 					<source src="../assets/media/background.mp4" type="video/mp4">

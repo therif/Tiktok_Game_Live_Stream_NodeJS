@@ -26,17 +26,25 @@
 }
 .top-left {
 	position: absolute;
+	background: rgba(0,0,0,.7);
+	border-radius: 10px;
 	font-size: 18px;
 	font-family: arial;
 	text-align: left;
 	font-weight: bold;
 	margin: auto;
-	margin-top: 105px;
-  	margin-left: 56px;
-	z-index: 100;
+	margin-top: 130px;
+  	margin-left: 75px;
+	padding-top: 3px;
+	padding-right: 3px;
+	padding-bottom: 3px;
+	padding-left: 3px;
+	z-index: 190;
 }
 .top-right {
 	position: absolute;
+	background: rgba(0,0,0,.7);
+	border-radius: 10px;
 	font-size: 18px;
 	font-family: arial;
 	opacity: 1;
@@ -44,10 +52,50 @@
 	font-weight: bold;
 	right: 18px;
 	/*margin: auto;*/
-	margin-top: 170px;
+	margin-top: 185px;
 	margin-left: auto; 
-	margin-right: 210px;
+	margin-right: 225px;
+	padding-top: 3px;
+	padding-right: 3px;
+	padding-bottom: 3px;
+	padding-left: 3px;
+	z-index: 199;
+}
+
+.popuphitam {	
+	background: rgba(0,0,0,.7);
+	border-radius: 10px;
+	padding-top: 3px;
+	padding-right: 3px;
+	padding-bottom: 3px;
+	padding-left: 10px;
+}
+.popupputih {
+	background: rgba(255, 255, 255, 0.7);
+	border-radius: 10px;
+	padding-top: 3px;
+	padding-right: 3px;
+	padding-bottom: 3px;
+	padding-left: 10px;
+}
+.popuphitam .windowtext {
+	margin: 3px 3px 0 0;
+	color: white;
+	font-size: 16px;
+	text-align: right;
+}
+
+.popuplike {
+	position: fixed;
+	height: auto;
+	float:right;
+	text-align: right;
+	right: 18px;
+	margin-top: 558px;
+	margin-left: auto;
+	margin-right: 230px;
 	z-index: 101;
+	visibility: visible;
 }
 .printer {
 	background-image: url('../media/printer.png');
